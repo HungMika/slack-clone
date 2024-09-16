@@ -1,0 +1,9 @@
+--------------------STEP BY STEP--------------------
+|SET-UP|
+--------------------
+Install bunjs with " powershell -c "irm bun.sh/install.ps1 | iex" ".
+Add (dependencies) shadcn/ui into project with cmd "bunx --bun shadcn@latest init":
+ - Install button component "bunx --bun shadcn@latest add button" located at (app/components/ui).
+Modify 
+
+
