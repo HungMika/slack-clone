@@ -1,6 +1,7 @@
 --------------------STEP BY STEP--------------------
 |SET-UP|
 --------------------
+(Can be done in frontend folder)
 Install bunjs on windows with ' powershell -c "irm bun.sh/install.ps1 | iex" '.
 Add (dependencies) shadcn/ui into project with cmd "bunx --bun shadcn@latest init":
  - Install component "bunx --bun shadcn@latest add button" -> (app/components/ui).
@@ -10,12 +11,20 @@ Modify app/page.tsx, clear all content in function Home().
 --------------------
 |DATABASE SET-UP|
 --------------------
+(Can be done in backend folder)
 Add Convex Nextjs with "bun add convex".
  - Log in and Run cmd "bun convex dev", input project name, checkout the https://dashboard.convex.dev.
- - create a sampleData.jsonl, run cmd "bunx convex import --table tasks sampleData.jsonl".
+ - (No need to do this step
+  create a sampleData.jsonl, run cmd "bunx convex import --table tasks sampleData.jsonl".
    *** With |=> "tasks" is table name.
-            |=> 3 column value as sampleData
-
+            |=> 3 column value as sampleData)
+ - create ConvexClientProvider.tsx -> (src/components).
+Add Convex Auth with cmd "bun add @convex-dev/auth @auth/core".
+ - run cmd "bunx @convex-dev/auth".
+ - following this website to setup DB (select Nextjs) -> https://labs.convex.dev/auth/setup
+github authentication:
+ - go to convex/your-project/settings and copy the HTTP Actions URL
+ - Pass to https://github.com/settings/developers as callback URL -> "sample.site/api/auth/callback/github" 
 WARNING: MUST RUN BOTH COMMAND (inorder to mantain api's connection):
 ** "bun run dev" for frontend.
 ** "bun convex dev" for backend.
