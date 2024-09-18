@@ -21,10 +21,13 @@ Add Convex Nextjs with "bun add convex".
  - create ConvexClientProvider.tsx -> (src/components).
 Add Convex Auth with cmd "bun add @convex-dev/auth @auth/core".
  - run cmd "bunx @convex-dev/auth".
- - following this website to setup DB (select Nextjs) -> https://labs.convex.dev/auth/setup
-github authentication:
+ - following this https://labs.convex.dev/auth/setup to setup DB (select Nextjs).
+Github authentication:
  - go to convex/your-project/settings and copy the HTTP Actions URL
- - Pass to https://github.com/settings/developers as callback URL -> "sample.site/api/auth/callback/github" 
+ - Pass to https://github.com/settings/developers as callback URL -> "sample.site/api/auth/callback/github".
+ - Copy the Client ID from github, run cmd: "bunx convex env set AUTH_GITHUB_ID=<gitClientID>".
+ - generate Client Secret Keys, run cmd: "bunx convex env set AUTH_GITHUB_SECRET=<cliSeKey>".
+ - Check convex your-project/settings/env variables.
 WARNING: MUST RUN BOTH COMMAND (inorder to mantain api's connection):
 ** "bun run dev" for frontend.
 ** "bun convex dev" for backend.
