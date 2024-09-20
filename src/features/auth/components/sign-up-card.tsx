@@ -13,16 +13,44 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 import { SignInflow } from "../types";
-import { useState } from "react";
+import React, { useState } from "react";
+import { TriangleAlert } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
   setstate: (state: SignInflow) => void;
 }
 
 export const SignUpCard = ({ setstate }: SignUpCardProps) => {
+  const { signIn } = useAuthActions();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const onPasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setPending(true);
+    signIn("password", { name, email, password, flow: "signUp" })
+      .catch(() => {
+        setError("Something went wrong");
+      })
+      .finally(() => {
+        setPending(false);
+      });
+  };
+
+  const onProviderSignUp = (value: "github" | "google") => {
+    setPending(true);
+    signIn(value).finally(() => setPending(false));
+  };
 
   return (
     <Card className="w-full h-full p-8">
@@ -32,14 +60,32 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
           use your email or another service to continue
         </CardDescription>
       </CardHeader>
-
+      {!!error && (
+        <div
+          className="
+      bg-destructive/15 
+      rounded-md flex p-3
+      items-center gap-x-2
+      text-sm text-destructive mb-6"
+        >
+          <TriangleAlert className="size-4" />
+          <p>{error}</p>
+        </div>
+      )}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5">
+        <form className="space-y-2.5" onSubmit={onPasswordSignUp}>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            disabled={pending}
+            placeholder="Name"
+          />
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            disabled={false}
+            disabled={pending}
             type="email"
             placeholder="Email"
           />
@@ -47,7 +93,7 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            disabled={false}
+            disabled={pending}
             type="password"
             placeholder="Password"
           />
@@ -55,19 +101,19 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            disabled={false}
+            disabled={pending}
             type="password"
             placeholder="Confirm password"
           />
-          <Button type="submit" className="w-full" disabled={false} size="lg">
+          <Button type="submit" className="w-full" disabled={pending} size="lg">
             Continue
           </Button>
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5 ">
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={pending}
+            onClick={() => onProviderSignUp("google")}
             className="w-full relative "
             variant={"outline"}
             size="lg"
@@ -76,8 +122,8 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
             Continue with Google
           </Button>
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={pending}
+            onClick={() => onProviderSignUp("github")}
             className="w-full relative "
             variant={"outline"}
             size="lg"
