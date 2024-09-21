@@ -1,9 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { UserButton } from "@/features/auth/components/user-button";
+import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 
 export default function Home() {
+  const { data, isLoading } = useGetWorkspaces();
+
+  const workspacesId = useMemo(() => data?.[0]?._id, [data]);
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (workspacesId) {
+      console.log(workspacesId, "there work space data");
+    } else {
+      console.log("at least it's in ");
+    }
+  }, [workspacesId, isLoading]);
+
   return (
     <div>
       <UserButton />
