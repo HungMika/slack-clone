@@ -4,6 +4,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { CreateWorkspaceModel } from "@/features/workspaces/components/create-workspace-model";
+import { Models } from "@/components/models";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,7 +33,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <CreateWorkspaceModel />
+          <Models/>
           <ConvexClientProvider>{children}</ConvexClientProvider>
         </body>
       </html>
