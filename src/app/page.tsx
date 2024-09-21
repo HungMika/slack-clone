@@ -4,8 +4,10 @@ import React, { useEffect, useMemo } from "react";
 import { UserButton } from "@/features/auth/components/user-button";
 import { useGetWorkSpaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useCreateWorkSpaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [open, setOpen] = useCreateWorkSpaceModal();
 
   const { data, isLoading } = useGetWorkSpaces();
@@ -17,6 +19,7 @@ export default function Home() {
 
     if (workspaceId) {
       console.log("Redirect to workspace");
+      router.replace(`/workspace/${workspaceId}`);
     } else if (!open) {
       setOpen(true);
     }
