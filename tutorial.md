@@ -11,6 +11,7 @@ Add (dependencies) shadcn/ui into project with cmd "bunx --bun shadcn@latest ini
 - Install component "bunx --bun shadcn@latest add card input separator" -> (app/components/ui).
 - Install component "bunx --bun shadcn@latest add avatar" -> (app/components/ui).
 - Install component "bunx --bun shadcn@latest add dropdown-menu" -> (app/components/ui).
+- Install component "bunx --bun shadcn@latest add dialog" -> (app/components/ui).
   Add react-icons with "bun add react-icons".
   Modify app/page.tsx, clear all content in function Home().
 
@@ -48,7 +49,11 @@ Add Convex Nextjs with "bun add convex".
   -- Authorized JavaScript origins: [https://localhost:3000],
   -- Authorized redirect URIs: [https://sample.site/api/auth/callback/google]
 - Copy Client ID, run cmd: "bunx convex env set AUTH_GOOGLE_ID=<clientID>".
-- Copy Client Secret, run cmd: "bunx convex env set AUTH_GOOGLE_SECRET <cliSe>"
+- Copy Client Secret, run cmd: "bunx convex env set AUTH_GOOGLE_SECRET <cliSe>".
+
+---
+
+- run cmd :"bun add jotai".
   WARNING: MUST RUN BOTH COMMAND (inorder to mantain api's connection):
   - "bun run dev" for frontend.
   - "bun convex dev" for backend.
