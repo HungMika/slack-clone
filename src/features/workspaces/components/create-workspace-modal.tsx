@@ -37,7 +37,7 @@ export const CreateWorkSpaceModal = () => {
           router.push(`/workspace/${workspaceId}`);
           setOpen(false);
         },
-      }
+      },
     );
   };
   return (
