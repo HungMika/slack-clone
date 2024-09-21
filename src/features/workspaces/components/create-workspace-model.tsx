@@ -10,10 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateWorkspaceAtom } from "../store/use-create-workspace-model";
+import { useCreateWorkspace } from "../api/use-create-workspace";
 
 export const CreateWorkspaceModel = () => {
   const [open, setOpen] = useCreateWorkspaceAtom();
+  const { mutate } = useCreateWorkspace();
   const handleClose = () => {
+    setOpen(false);
     //TODO: handle close
   };
   return (
