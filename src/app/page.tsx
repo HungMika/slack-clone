@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo } from "react";
 import { UserButton } from "@/features/auth/components/user-button";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
-import { useCreateWorkspaceAtom } from "@/features/store/use-create-workspace-model";
+import { useCreateWorkspaceAtom } from "@/features/workspaces/store/use-create-workspace-model";
 
 export default function Home() {
   const [open, setOpen] = useCreateWorkspaceAtom();
