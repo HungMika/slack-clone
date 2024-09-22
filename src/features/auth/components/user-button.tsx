@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "../api/use-current-user";
 import { Loader, LogOut } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -39,9 +39,7 @@ export const UserButton = () => {
           }}
           className="h-10"
         >
-          <div className="flex items-center">
-            <LogOut className="size-4 mr-2" /> Log out
-          </div>
+          <LogOut className="size-4 mr-2" /> Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
