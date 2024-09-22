@@ -39,8 +39,11 @@ export const getById = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
+      console.log("Unauthorized");
       throw new Error("Unauthorized");
     }
-    return await ctx.db.get(args.id);
+    const tempData = await ctx.db.get(args.id);
+    console.log(tempData,"tempData");
+    return await ctx.db.query("workspaces").collect()
   },
 });
