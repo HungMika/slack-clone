@@ -22,7 +22,7 @@ export const WorkspaceSwitcher = () => {
   });
 
   const filteredWorkspaces = workspaces?.filter(
-    (workspace) => workspace?._id !== workspaceId
+    (workspace) => workspace?._id !== workspaceId,
   );
   return (
     <DropdownMenu>
