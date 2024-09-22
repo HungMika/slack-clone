@@ -42,8 +42,10 @@ export const getById = query({
       console.log("Unauthorized");
       throw new Error("Unauthorized");
     }
-    const tempData = await ctx.db.get(args.id);
-    console.log(tempData,"tempData");
-    return await ctx.db.query("workspaces").collect()
+    const workspace = await ctx.db.get(args.id);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+    return workspace;
   },
 });

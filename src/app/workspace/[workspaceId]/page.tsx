@@ -10,6 +10,6 @@ const WorkspaceIdPage = () => {
   useEffect(() => {
     console.log(data);
   }, [data]);
-  return <div>ID: {workspaceId}</div>;
+  return <div>ID: {JSON.stringify(data)}</div>;
 };
 export default WorkspaceIdPage;
