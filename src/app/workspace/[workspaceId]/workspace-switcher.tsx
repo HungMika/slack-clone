@@ -22,7 +22,7 @@ export const WorkspaceSwitcher = () => {
   });
 
   const filteredWorkspaces = workspaces?.filter(
-    (workspace) => workspace?._id !== workspaceId,
+    (workspace) => workspace?._id !== workspaceId
   );
   return (
     <DropdownMenu>
@@ -49,9 +49,12 @@ export const WorkspaceSwitcher = () => {
           <DropdownMenuItem
             key={workspace?._id}
             onClick={() => router.push(`/workspace/${workspace?._id}`)}
-            className="currsor-pointer capitalize"
+            className="currsor-pointer capitalize overflow-hidden truncate"
           >
-            {workspace?.name}
+            <div className="shrink-0 size-9 relative overflow-hidden bg-[#616061] text-white font-semibold text-lg rounded-md flex items-center justify-center mr-2">
+              {workspace?.name.charAt(0).toUpperCase()}
+            </div>
+            <p className="truncate">{workspace?.name}</p>
           </DropdownMenuItem>
         ))}
         <DropdownMenuItem

@@ -26,7 +26,7 @@ export const create = mutation({
     return workspaceId;
   },
 });
-
+// TODO: need to find workspace with userId
 export const get = query({
   args: {},
   handler: async (ctx) => {
