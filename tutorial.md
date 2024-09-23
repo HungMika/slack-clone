@@ -14,6 +14,7 @@ Add (dependencies) shadcn/ui into project with cmd "bunx --bun shadcn@latest ini
 - Install component "bunx --bun shadcn@latest add dialog" -> (app/components/ui).
 - Install component "bunx --bun shadcn@latest add sonner" -> (app/components/ui).
 - Install component "bunx --bun shadcn@latest add resizable" -> (app/components/ui).
+- Install component "bunx --bun shadcn@latest add tooltip" -> (app/components/ui).
   Add react-icons with "bun add react-icons".
   Modify app/page.tsx, clear all content in function Home().
 
