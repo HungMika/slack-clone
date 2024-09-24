@@ -13,7 +13,7 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 import { SignInflow } from "../types";
-import { HtmlHTMLAttributes, useState } from "react";
+import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { TriangleAlert } from "lucide-react";
 

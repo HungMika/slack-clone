@@ -21,13 +21,13 @@ export const WorkspaceHeader = ({
   workspace,
   isAdmin,
 }: WorkspaceHeaderProps) => {
-  const [open, setOpen] = useState(false);
+  const [prefOpen, setPrefOpen] = useState(false);
 
   return (
     <>
       <PreferencesModal
-        open={open}
-        setOpen={setOpen}
+        open={prefOpen}
+        setOpen={setPrefOpen}
         initialValue={workspace.name}
       />
       <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
@@ -70,7 +70,7 @@ export const WorkspaceHeader = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer py-2"
-                  onClick={() => setOpen(true)}
+                  onClick={() => setPrefOpen(true)}
                 >
                   Preferences
                 </DropdownMenuItem>
