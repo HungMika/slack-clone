@@ -11,10 +11,10 @@ import { Separator } from "@/components/ui/separator";
 
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { TriangleAlert } from "lucide-react";
 
 import { SignInflow } from "../types";
 import React, { useState } from "react";
-import { TriangleAlert } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {

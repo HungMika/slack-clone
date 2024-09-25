@@ -5,12 +5,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useGetWorkSpaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useCreateWorkSpaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
+
 import { Loader, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
