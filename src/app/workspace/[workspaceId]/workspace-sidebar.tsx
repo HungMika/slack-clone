@@ -9,11 +9,14 @@ import React from "react";
 
 import { SidebarItem } from "./sidebar-item";
 import { WorkspaceHeader } from "./workspace-header";
+import { WorkspaceSection } from "./workspace-section";
+
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useGetMember } from "@/features/members/api/use-get-member";
 import { useGetChannel } from "@/features/channels/api/use-get-channels";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
-import { WorkspaceSection } from "./workspace-section";
+import { UserItem } from "./user-item";
 
 export const WorkSpaceSideBar = () => {
   const workspaceId = useWorkspaceId();
@@ -26,6 +29,9 @@ export const WorkSpaceSideBar = () => {
   });
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkSpace({
     id: workspaceId,
+  });
+  const { data: members, isLoading: membersLoading } = useGetMember({
+    workspaceId,
   });
 
   if (memberLoading || workspaceLoading) {
@@ -53,17 +59,28 @@ export const WorkSpaceSideBar = () => {
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
         <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
-        <WorkspaceSection label="Channels" hint="New channel" onNew={() => {}}>
-          {channels?.map((item) => (
-            <SidebarItem
-              id={item._id}
-              key={item._id}
-              icon={HashIcon}
-              label={item.name}
-            />
-          ))}
-        </WorkspaceSection>
       </div>
+
+      <WorkspaceSection label="Channels" hint="New channel" onNew={() => {}}>
+        {channels?.map((item) => (
+          <SidebarItem
+            id={item._id}
+            key={item._id}
+            icon={HashIcon}
+            label={item.name}
+          />
+        ))}
+      </WorkspaceSection>
+      {members?.map((item) => (
+        <div>
+          <UserItem
+            id={item._id}
+            key={item._id}
+            image={item.user.image}
+            label={item.user.name}
+          />
+        </div>
+      ))}
     </div>
   );
 };
