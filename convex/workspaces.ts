@@ -1,7 +1,8 @@
+import { auth } from "./auth";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { auth } from "./auth";
 import { getAuthUserId } from "@convex-dev/auth/server";
+
 const generateCode = () => {
   const code = Array.from(
     { length: 6 },
@@ -39,6 +40,10 @@ export const create = mutation({
       role: "admin",
     });
 
+    await ctx.db.insert("channels", {
+      name: "general",
+      workspaceId,
+    });
     return workspaceId;
   },
 });
