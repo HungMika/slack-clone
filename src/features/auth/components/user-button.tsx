@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import React from "react";
 import { Loader, LogOut } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useCurrentUser } from "../api/use-current-user";
@@ -26,9 +27,9 @@ export const UserButton = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-        <Avatar className="size-10 hover:opacity-75 transition">
-          <AvatarImage alt={name} src={image} />
-          <AvatarFallback className="bg-sky-400 text-white">
+        <Avatar className="size-10 hover:opacity-75 transition rounded-md">
+          <AvatarImage className="rounded-md" alt={name} src={image} />
+          <AvatarFallback className="rounded-md bg-sky-500 text-white">
             {avatarFallback}
           </AvatarFallback>
         </Avatar>

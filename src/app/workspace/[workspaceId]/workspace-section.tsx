@@ -3,15 +3,15 @@ import { useToggle } from "react-use";
 import { PlusIcon } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
 
+import { cn } from "@/lib/utils";
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface WorkspaceSectionProps {
   children: React.ReactNode;
   label: string;
   hint: string;
-  onNew: () => void;
+  onNew?: () => void;
 }
 
 export const WorkspaceSection = ({
