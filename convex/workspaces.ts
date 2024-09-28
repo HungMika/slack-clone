@@ -6,7 +6,8 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 const generateCode = () => {
   const code = Array.from(
     { length: 6 },
-    () => "0123456789abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 36)]
+    () =>
+      "0123456789abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 36)],
   ).join("");
 
   return code;
@@ -59,10 +60,10 @@ export const newJoinCode = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
       )
       .unique();
-      
+
     if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
@@ -70,7 +71,7 @@ export const newJoinCode = mutation({
     await ctx.db.patch(args.workspaceId, {
       joinCode,
     });
-    return args.workspaceId; 
+    return args.workspaceId;
   },
 });
 
@@ -114,7 +115,7 @@ export const getById = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
+        q.eq("workspaceId", args.id).eq("userId", userId),
       )
       .unique();
 
@@ -139,7 +140,7 @@ export const update = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
+        q.eq("workspaceId", args.id).eq("userId", userId),
       )
       .unique();
 
@@ -167,7 +168,7 @@ export const updateV2 = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
+        q.eq("workspaceId", args.id).eq("userId", userId),
       )
       .unique();
 
@@ -196,7 +197,7 @@ export const remove = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
+        q.eq("workspaceId", args.id).eq("userId", userId),
       )
       .unique();
 

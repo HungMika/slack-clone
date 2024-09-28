@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useNewJoinCode } from "@/features/workspaces/api/use-new-join-code";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { CopyIcon, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
@@ -26,13 +27,19 @@ export const InviteModel = ({
   joinCode,
 }: InviteModelProps) => {
   const workspaceId = useWorkspaceId();
+  const [ConfirmDialog, confirm] = useConfirm(
+    "Are you sure",
+    "This will revoke the current join code and generate a new one.",
+  );
   const { mutate, isPending } = useNewJoinCode();
   const hanldeCopyLink = () => {
     navigator.clipboard
       .writeText(`${window.location.origin}/join/${joinCode}`)
       .then(() => toast.success("Link copied to clipboard"));
   };
-  const handleRefreshCode = () => {
+  const handleRefreshCode = async () => {
+    const ok = await confirm();
+    if (!ok) return;
     mutate(
       { workspaceId },
       {
@@ -43,11 +50,12 @@ export const InviteModel = ({
           console.log(error.message, "error");
           toast.error("Failed to generate new join code");
         },
-      }
+      },
     );
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      <ConfirmDialog />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Invite people to</DialogTitle>
@@ -65,7 +73,11 @@ export const InviteModel = ({
           </Button>
         </div>
         <div className="flex items-center justify-between w-full">
-          <Button onClick={handleRefreshCode} variant={"outline"}>
+          <Button
+            disabled={isPending}
+            onClick={handleRefreshCode}
+            variant={"outline"}
+          >
             New code
             <RefreshCcw className="size-4 ml-2"></RefreshCcw>
           </Button>
