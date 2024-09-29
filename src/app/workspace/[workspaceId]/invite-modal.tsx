@@ -1,38 +1,42 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
+  DialogTitle,
+  DialogHeader,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
-import { useNewJoinCode } from "@/features/workspaces/api/use-new-join-code";
+import { Button } from "@/components/ui/button";
+
 import { useConfirm } from "@/hooks/use-confirm";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { CopyIcon, RefreshCcw } from "lucide-react";
-import { toast } from "sonner";
+import { useNewJoinCode } from "@/features/workspaces/api/use-new-join-code";
 
-interface InviteModelProps {
+import { toast } from "sonner";
+import { CopyIcon, RefreshCcw } from "lucide-react";
+
+interface InviteModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   name: string;
   joinCode: string;
 }
 
-export const InviteModel = ({
+export const InviteModal = ({
   open,
   setOpen,
   name,
   joinCode,
-}: InviteModelProps) => {
+}: InviteModalProps) => {
   const workspaceId = useWorkspaceId();
+  const { mutate, isPending } = useNewJoinCode();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure",
     "This will revoke the current join code and generate a new one.",
   );
-  const { mutate, isPending } = useNewJoinCode();
-  const hanldeCopyLink = () => {
+
+  const handleCopyLink = () => {
     navigator.clipboard
       .writeText(`${window.location.origin}/join/${joinCode}`)
       .then(() => toast.success("Link copied to clipboard"));
@@ -56,18 +60,18 @@ export const InviteModel = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <ConfirmDialog />
-      <DialogContent>
+      <DialogContent className="bg-white">
         <DialogHeader>
-          <DialogTitle>Invite people to</DialogTitle>
+          <DialogTitle>Invite people to {name}</DialogTitle>
           <DialogDescription>
-            Use the below code to invite people to {name}
+            Use the below code to invite people to your workspace
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center gap-y-4 py-4 justify-center">
           <p className="text-4xl font-bold tracking-widest uppercase">
             {joinCode}
           </p>
-          <Button onClick={hanldeCopyLink} variant={"ghost"}>
+          <Button onClick={handleCopyLink} variant={"ghost"}>
             Copy link
             <CopyIcon className="size-4 ml-2" />
           </Button>

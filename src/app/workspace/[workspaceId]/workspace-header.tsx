@@ -12,7 +12,7 @@ import { Doc } from "../../../../convex/_generated/dataModel";
 
 import { useState } from "react";
 import { ChevronDown, Filter, SquarePen } from "lucide-react";
-import { InviteModel } from "./invite-model";
+import { InviteModal } from "./invite-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
@@ -27,7 +27,7 @@ export const WorkspaceHeader = ({
 
   return (
     <>
-      <InviteModel
+      <InviteModal
         open={inviteOpen}
         setOpen={setInviteOpen}
         name={workspace.name}

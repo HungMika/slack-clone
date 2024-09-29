@@ -58,6 +58,7 @@ Add Convex Nextjs with "bun add convex".
 
 - run cmd :"bun add jotai".
 - run cmd :"bun add react-use".
+- run cmd :"bun add react-verification-input".
   WARNING: MUST RUN BOTH COMMAND (inorder to mantain api's connection):
   - "bun run dev" for frontend.
   - "bun convex dev" for backend.
