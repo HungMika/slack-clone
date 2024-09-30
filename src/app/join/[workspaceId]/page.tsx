@@ -2,25 +2,27 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Loader } from "lucide-react";
 import VerificationInput from "react-verification-input";
 
 import { Button } from "@/components/ui/button";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { console } from "inspector";
+import { useGetWorkSpaceInfo } from "@/features/workspaces/api/use-get-workspace-info";
 
-interface JoinPageProps {
-  params: { workspaceId: string };
-}
-
-const JoinPage = ({ params }: JoinPageProps) => {
+const JoinPage = () => {
   const workspaceId = useWorkspaceId();
-  console.log({ params });
+  const { data, isLoading } = useGetWorkSpaceInfo({ id: workspaceId });
+
+  if (isLoading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <Loader className="size-6 animate-pulse text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="
-    h-full flex flex-col gap-y-8 items-center
-    justify-center bg-white p-8 rounded-lg shadow-md"
-    >
+    <div className="h-full flex flex-col gap-y-8 items-center justify-center bg-white p-8 rounded-lg shadow-md">
       <Image src="/logo.svg" width={60} height={60} alt="Logo" />
       <div className="flex flex-col gap-y-4 items-center justify-center max-w-md">
         <div className="flex flex-col gap-y-2 items-center justify-center">
