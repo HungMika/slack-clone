@@ -7,16 +7,36 @@ import VerificationInput from "react-verification-input";
 
 import { Button } from "@/components/ui/button";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useJoin } from "@/features/workspaces/api/use-join";
 import { useGetWorkSpaceInfo } from "@/features/workspaces/api/use-get-workspace-info";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const JoinPage = () => {
+  const router = useRouter();
   const workspaceId = useWorkspaceId();
+  const { mutate, isPending } = useJoin();
   const { data, isLoading } = useGetWorkSpaceInfo({ id: workspaceId });
+
+  const handleComplete = (value: string) => {
+    mutate(
+      { workspaceId, joinCode: value },
+      {
+        onSuccess: (id) => {
+          router.replace(`/workspace/${id}`);
+          toast.success("Workspace joined");
+        },
+        onError: () => {
+          toast.error("Failed to join workspace");
+        },
+      },
+    );
+  };
 
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <Loader className="size-6 animate-pulse text-muted-foreground" />
+        <Loader className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -26,12 +46,13 @@ const JoinPage = () => {
       <Image src="/logo.svg" width={60} height={60} alt="Logo" />
       <div className="flex flex-col gap-y-4 items-center justify-center max-w-md">
         <div className="flex flex-col gap-y-2 items-center justify-center">
-          <h1 className="text-2xl font-bold">Join workspace</h1>
+          <h1 className="text-2xl font-bold">Join {data?.name}</h1>
           <p className="text-md text-muted-foreground">
             Enter the workspace code to join
           </p>
         </div>
         <VerificationInput
+          onComplete={handleComplete}
           length={6}
           autoFocus
           classNames={{
