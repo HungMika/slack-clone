@@ -1,3 +1,4 @@
+import React from "react";
 import { SideBarButton } from "./sidebar-button";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 

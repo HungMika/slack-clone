@@ -11,13 +11,13 @@ const sidebarItemVariant = cva(
   "flex items-center gap-1.5 justify-start font-normal h-7 px-[18px] text-sm overflow-hidden",
   {
     variants: {
-      variants: {
+      variant: {
         default: "text-[#f9edffcc]",
         active: "text-[#481349] bg-white/90 hover:bg-white/90",
       },
     },
     defaultVariants: {
-      variants: "default",
+      variant: "default",
     },
   },
 );
@@ -26,14 +26,14 @@ interface SidebarItemProps {
   label: string;
   icon: LucideIcon | IconType;
   id: string;
-  variants?: VariantProps<typeof sidebarItemVariant>["variants"];
+  variant?: VariantProps<typeof sidebarItemVariant>["variant"];
 }
 
 export const SidebarItem = ({
   label,
   icon: Icon,
   id,
-  variants,
+  variant,
 }: SidebarItemProps) => {
   const workspaceId = useWorkspaceId();
 
@@ -41,7 +41,7 @@ export const SidebarItem = ({
     <Button
       variant="transparent"
       size="sm"
-      className={cn(sidebarItemVariant({ variants }))}
+      className={cn(sidebarItemVariant({ variant }))}
       asChild
     >
       <Link href={`/workspace/${workspaceId}/channel/${id}`}>
