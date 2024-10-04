@@ -15,7 +15,7 @@ import { WorkspaceSection } from "./workspace-section";
 import { useChannelId } from "@/hooks/use-channel-id";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useGetMember } from "@/features/members/api/use-get-member";
-import { useGetChannel } from "@/features/channels/api/use-get-channels";
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
@@ -26,7 +26,7 @@ export const WorkSpaceSideBar = () => {
 
   const [_isOpen, setIsOpen] = useCreateChannelModal();
 
-  const { data: channels, isLoading: channelsLoading } = useGetChannel({
+  const { data: channels, isLoading: channelsLoading } = useGetChannels({
     workspaceId,
   });
   const { data: member, isLoading: memberLoading } = useCurrentMember({

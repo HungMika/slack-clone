@@ -1,10 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo } from "react";
-import { Disc3, Loader, TriangleAlert } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Loader, TriangleAlert } from "lucide-react";
 
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { useGetChannel } from "@/features/channels/api/use-get-channels";
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
@@ -20,7 +20,7 @@ const ChannelIdPage = () => {
   const { data: workspace, isLoading: WorkspaceLoading } = useGetWorkSpace({
     id: workspaceId,
   });
-  const { data: channels, isLoading: channelsLoading } = useGetChannel({
+  const { data: channels, isLoading: channelsLoading } = useGetChannels({
     workspaceId,
   });
   const channelId = useMemo(() => channels?.[0]?._id, [channels]);
@@ -36,28 +36,28 @@ const ChannelIdPage = () => {
     ) {
       return;
     }
-
-    if (channelId) {
-      router.push(`/workspace/${workspaceId}/channel/${channelId}`);
-    } else if (!open && isAdmin) setOpen(true);
+    // if (channelId) {
+    //   router.push(`/workspace/${workspaceId}/channel/${channelId}`);
+    // }
+    if (!channelId && !open && isAdmin) setOpen(true);
   }, [
     channelId,
     WorkspaceLoading,
     channelsLoading,
     workspace,
-    router,
     open,
     setOpen,
     workspaceId,
     member,
     memberLoading,
     isAdmin,
+    router,
   ]);
 
   if (WorkspaceLoading || channelsLoading) {
     return (
       <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-        <Disc3 className="size-6 animate-spin text-muted-foreground" />
+        <Loader className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
