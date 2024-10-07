@@ -52,6 +52,10 @@ export const getById = query({
         q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
       )
       .unique();
+
+    if (!member) return null;
+
+    return channel;
   },
 });
 
