@@ -13,18 +13,33 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useChannelId } from "@/hooks/use-channel-id";
+import { useUpdateChannel } from "@/features/channels/api/use-update-channel";
 
 interface HeaderProps {
   title: string;
 }
 
 export const Header = ({ title }: HeaderProps) => {
+  const channelId = useChannelId();
   const [value, setValue] = useState(title);
   const [editOpen, setEditOpen] = useState(false);
+
+  const { mutate: updateChannel, isPending: updatingChannel } =
+    useUpdateChannel();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\s+/g, "-").toLowerCase();
     setValue(value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateChannel({
+      id: channelId,
+      name: value,
+    });
+    setEditOpen(false);
   };
 
   return (
@@ -57,7 +72,7 @@ export const Header = ({ title }: HeaderProps) => {
                   <p className="text-sm"># {title}</p>
                 </div>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-white">
                 <DialogHeader>
                   <DialogTitle>Rename this channel</DialogTitle>
                 </DialogHeader>
