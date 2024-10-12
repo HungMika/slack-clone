@@ -25,7 +25,7 @@ export const useRemoveChannel = () => {
   const isError = useMemo(() => status === "error", [status]);
   const isSuccess = useMemo(() => status === "success", [status]);
   const isSettled = useMemo(() => status === "settled", [status]);
-
+  console.log("this got call ");
   const mutation = useMutation(api.channels.remove);
 
   const mutate = useCallback(
