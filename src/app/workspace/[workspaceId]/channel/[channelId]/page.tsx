@@ -11,6 +11,7 @@ import { useCreateChannelModal } from "@/features/channels/store/use-create-chan
 import { useChannelId } from "@/hooks/use-channel-id";
 import { useGetSingleChannel } from "@/features/channels/api/use-get-single-channel";
 import { Header } from "./header";
+import { ChatInput } from "./chat-input";
 
 const ChannelIdPage = () => {
   const channelId = useChannelId();
@@ -36,6 +37,8 @@ const ChannelIdPage = () => {
   return (
     <div className="flex flex-col h-full">
       <Header title={singleChannel.name} />
+      <div className="flex-1" />
+      <ChatInput />
     </div>
   );
 };
