@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { ImageIcon, Smile } from "lucide-react";
 import { Hint } from "./hint";
 import { Delta, Op } from "quill/core";
+import { cn } from "@/lib/utils";
 
 type EditorValue = {
   image: File | null;
@@ -64,6 +65,19 @@ const Editor = ({
     const option: QuillOptions = {
       theme: "snow",
       placeholder: placeholderRef.current,
+      modules: {
+        keyboard: {
+          bindings: {
+            enter: {
+              key: "Enter",
+              handler: () => {
+                console.log("enter presses");
+                return;
+              },
+            },
+          },
+        },
+      },
     };
 
     const quill = new Quill(editorContainer, option);
@@ -120,10 +134,10 @@ const Editor = ({
               <Smile className="size-4" />
             </Button>
           </Hint>
-          {variant == "create" && (
+          {variant === "create" && (
             <Hint label="Image">
               <Button
-                disabled={false}
+                disabled={disabled || isEmpty}
                 size="iconSm"
                 variant="ghost"
                 onClick={() => {}}
@@ -147,18 +161,23 @@ const Editor = ({
                 size="sm"
                 onClick={() => {}}
                 disabled={false}
-                className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white "
+                className={cn("bg-[#007a5a] hover:bg-[#007a5a]/80 text-white ")}
               >
                 Save
               </Button>
             </div>
           )}
-          {variant == "create" && (
+          {variant === "create" && (
             <Button
               disabled={false}
               onClick={() => {}}
               size="iconSm"
-              className="ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white "
+              className={cn(
+                "ml-auto",
+                isEmpty
+                  ? " bg-white hover:bg-white/80 text-muted-foreground"
+                  : " bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+              )}
             >
               <MdSend className="size-4" />
             </Button>
