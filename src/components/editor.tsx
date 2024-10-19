@@ -4,8 +4,8 @@ import { PiTextAa } from "react-icons/pi";
 import "quill/dist/quill.snow.css";
 import {
   MutableRefObject,
-  use,
   useEffect,
+  use,
   useLayoutEffect,
   useRef,
   useState,
@@ -15,6 +15,7 @@ import { ImageIcon, Smile } from "lucide-react";
 import { Hint } from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
+import { EmojiPopover } from "./emoji-popover";
 
 type EditorValue = {
   image: File | null;
@@ -207,11 +208,18 @@ const Editor = ({
             </Button>
           )}
         </div>
-        <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-          <p>
-            <strong>Shift + Return</strong> to add new line
-          </p>
-        </div>
+        {variant === "create" && (
+          <div
+            className={cn(
+              "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 trasition",
+              !isEmpty && "opacity-100",
+            )}
+          >
+            <p>
+              <strong>Shift + Return</strong> to add new line
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
