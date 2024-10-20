@@ -41,6 +41,7 @@ const Editor = ({
   variant = "create",
 }: EditorProps) => {
   const [text, setText] = useState("");
+  const [img, setImage] = useState<File | null>(null);
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
   const submitRef = useRef(onSubmit);
@@ -49,7 +50,7 @@ const Editor = ({
   const defaultValueRef = useRef(defaultValue);
   const disabledRef = useRef(disabled);
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const imageElementRef = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
     placeholderRef.current = placeholder;
@@ -61,7 +62,7 @@ const Editor = ({
 
     const container = containerRef.current;
     const editorContainer = container.appendChild(
-      container.ownerDocument.createElement("div"),
+      container.ownerDocument.createElement("div")
     );
 
     const option: QuillOptions = {
@@ -134,6 +135,15 @@ const Editor = ({
   console.log({ isEmpty, text }, "yo");
   return (
     <div className="flex flex-col">
+      <input
+        type="file"
+        accept="img/*"
+        ref={imageElementRef}
+        onChange={(e) => {
+          setImage(e.target.files![0]);
+        }}
+        className="hidden"
+      />
       <div className="flex flex-col border border-slate-200 rounded-e overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
         <div ref={containerRef} className="h-full ql-custom" />
         <div className="flex px-2 pb-2 z-[5]">
@@ -149,7 +159,7 @@ const Editor = ({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Emoji">
+          <EmojiPopover onEmojiSelect={() => {}}>
             <Button
               disabled={disabled}
               size="iconSm"
@@ -158,14 +168,14 @@ const Editor = ({
             >
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
           {variant === "create" && (
             <Hint label="Image">
               <Button
-                disabled={disabled || isEmpty}
+                disabled={disabled}
                 size="iconSm"
                 variant="ghost"
-                onClick={() => {}}
+                onClick={() => imageElementRef.current?.click()}  
               >
                 <ImageIcon className="size-4" />
               </Button>
@@ -201,7 +211,7 @@ const Editor = ({
                 "ml-auto",
                 isEmpty
                   ? " bg-white hover:bg-white/80 text-muted-foreground"
-                  : " bg-[#007a5a] hover:bg-[#007a5a]/80 text-white",
+                  : " bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
               )}
             >
               <MdSend className="size-4" />
@@ -212,7 +222,7 @@ const Editor = ({
           <div
             className={cn(
               "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 trasition",
-              !isEmpty && "opacity-100",
+              !isEmpty && "opacity-100"
             )}
           >
             <p>
