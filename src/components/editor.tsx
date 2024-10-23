@@ -80,8 +80,15 @@ const Editor = ({
             enter: {
               key: "Enter",
               handler: () => {
-                console.log("enter presses");
-                return;
+                const text = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] || null;
+
+                const checkIsEmpty =
+                  !addedImage &&
+                  text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
+                if (checkIsEmpty) return;
+                const body = JSON.stringify(quill.getContents());
+                submitRef.current({ body, image: addedImage });
               },
             },
             shift_enter: {
@@ -137,7 +144,7 @@ const Editor = ({
   };
 
   //   quillRef.current?.gettext does not update when the text is changed.
-  const isEmpty = text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
+  const isEmpty = !image && text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
   console.log({ isEmpty, text }, "yo");
   return (
     <div className="flex flex-col">
@@ -220,7 +227,12 @@ const Editor = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  });
+                }}
                 disabled={disabled || isEmpty}
                 className={cn("bg-[#007a5a] hover:bg-[#007a5a]/80 text-white ")}
               >
