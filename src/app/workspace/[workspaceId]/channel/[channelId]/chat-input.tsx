@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useCreateMessage } from "@/features/messages/api/use-create-message";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useChannelId } from "@/hooks/use-channel-id";
+import { toast } from "sonner";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -15,6 +16,7 @@ interface ChatInputProps {
 
 export const ChatInput = ({ placeholder }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(0);
+  const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<Quill | null>(null);
   // editorRef.current?.focus()
   const workspaceId = useWorkspaceId();
@@ -31,6 +33,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
   }) => {
     console.log({ body, image }, "message");
     try {
+      setIsPending(true);
       await createMessage(
         {
           workspaceId,
@@ -41,8 +44,9 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
       );
       setEditorKey((prev) => prev + 1);
     } catch (e) {
-      console.log(e);
+      toast.error("Failed to send message");
     } finally {
+      setIsPending(false);
     }
   };
 
@@ -52,7 +56,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
         key={editorKey}
         placeholder={placeholder}
         onSubmit={handleSubmit}
-        disabled={false}
+        disabled={isPending}
         innerRef={editorRef}
       />
     </div>
