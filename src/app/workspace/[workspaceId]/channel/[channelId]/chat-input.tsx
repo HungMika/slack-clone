@@ -74,14 +74,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
 
         values.image = storageId;
       }
-      await createMessage(
-        {
-          workspaceId,
-          channelId,
-          body,
-        },
-        { throwError: true }
-      );
+      await createMessage(values, { throwError: true });
       setEditorKey((prev) => prev + 1);
     } catch (e) {
       toast.error("Failed to send message");
