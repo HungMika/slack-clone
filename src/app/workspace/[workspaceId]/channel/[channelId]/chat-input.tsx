@@ -61,7 +61,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
         const result = await fetch(url, {
           method: "POST",
           headers: {
-            "Content-Type": "application/img",
+            "Content-Type": image.type,
           },
           body: image,
         });

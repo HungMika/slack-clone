@@ -24,7 +24,7 @@ export const useGenerateUploadUrl = () => {
   const isSuccess = useMemo(() => status === "success", [status]);
   const isSettled = useMemo(() => status === "settled", [status]);
 
-  const mutation = useMutation(api.upload.genergrateUploadUrl);
+  const mutation = useMutation(api.upload.generateUploadUrl);
 
   const mutate = useCallback(
     async (_values: {}, options?: Options) => {
