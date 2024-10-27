@@ -145,7 +145,7 @@ const Editor = ({
 
   //   quillRef.current?.gettext does not update when the text is changed.
   const isEmpty = !image && text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
-  console.log({ isEmpty, text }, "yo");
+  //console.log({ isEmpty, text }, "yo");
   return (
     <div className="flex flex-col">
       <input

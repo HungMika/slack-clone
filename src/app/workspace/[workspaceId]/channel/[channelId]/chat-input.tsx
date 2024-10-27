@@ -54,6 +54,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
       };
       if (image) {
         const url = await generateUploadUrl({}, { throwError: true });
+        console.log({ url });
 
         if (!url) {
           throw new Error("Failed to generate upload url");
@@ -65,7 +66,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
           },
           body: image,
         });
-
+        console.log({ result });
         if (!result.ok) {
           throw new Error("Failed to upload image");
         }
