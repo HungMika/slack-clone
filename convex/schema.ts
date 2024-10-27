@@ -45,5 +45,15 @@ const schema = defineSchema({
       "parentMessageId",
       "conversationId",
     ]),
+
+  reactions: defineTable({
+    workspaceId: v.id("workspaces"),
+    messageId: v.id("messages"),
+    memberId: v.id("members"),
+    value: v.string(),
+  })
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_message_id", ["messageId"])
+    .index("by_member_id", ["memberId"]),
 });
 export default schema;
