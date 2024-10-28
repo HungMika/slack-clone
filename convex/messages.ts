@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 
 const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
@@ -85,9 +85,11 @@ export const get = query({
     let _conversationId = args.conversationId;
     if (!args.conversationId && !args.channelId && args.parentMessageId) {
       const parentMessage = await ctx.db.get(args.parentMessageId);
+
       if (!parentMessage) {
         throw new Error("Parent message not found");
       }
+
       _conversationId = parentMessage.conversationId;
     }
 
@@ -101,18 +103,72 @@ export const get = query({
       )
       .order("desc")
       .paginate(args.paginationOpts);
+
     return {
       ...results,
-      page: await Promise.all(
-        results.page.map(async (message) => {
-          const member = await populateMember(ctx, message.memberId);
-          const user = member ? await populateUser(ctx, member.userId) : null;
-          if (!member || !user) {
-            return null;
-          }
-          const reactions = await populateReaction(ctx, message._id);
-          const thread = await populateThread(ctx, message._id);
-        }),
+      page: (
+        await Promise.all(
+          results.page.map(async (message) => {
+            const member = await populateMember(ctx, message.memberId);
+            const user = member ? await populateUser(ctx, member.userId) : null;
+            if (!member || !user) {
+              return null;
+            }
+            const reactions = await populateReaction(ctx, message._id);
+            const thread = await populateThread(ctx, message._id);
+            const image = message.image
+              ? await ctx.storage.getUrl(message.image)
+              : undefined;
+
+            const reactionsWithCounts = reactions.map((reaction) => {
+              return {
+                ...reaction,
+                count: reactions.filter((r) => r.value === reaction.value)
+                  .length,
+              };
+            });
+
+            const dedupedReactions = reactionsWithCounts.reduce(
+              (acc, reaction) => {
+                const existingReaction = acc.find(
+                  (r) => r.value === reaction.value,
+                );
+                if (existingReaction) {
+                  existingReaction.memberIds = Array.from(
+                    new Set([...existingReaction.memberIds, reaction.memberId]),
+                  );
+                } else {
+                  acc.push({
+                    ...reaction,
+                    memberIds: [reaction.memberId],
+                  });
+                }
+                return acc;
+              },
+              [] as (Doc<"reactions"> & {
+                count: number;
+                memberIds: Id<"members">[];
+              })[],
+            );
+
+            const reactionWithoutMemberIdProperty = dedupedReactions.map(
+              ({ memberId, ...rest }) => rest,
+            );
+
+            return {
+              ...message,
+              member,
+              user,
+              image,
+              reactions: reactionWithoutMemberIdProperty,
+              threadCount: thread.count,
+              threadImage: thread.image,
+              threadTimestamp: thread.timestamp,
+            };
+          }),
+        )
+      ).filter(
+        (message): message is NonNullable<typeof message> => message != null,
       ),
     };
   },
@@ -158,7 +214,6 @@ export const create = mutation({
       conversationId: _conversationId,
       workspaceId: args.workspaceId,
       parentMessageId: args.parentMessageId,
-      updatedAt: Date.now(),
       //TODO: add conversationId
     });
 

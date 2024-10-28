@@ -13,14 +13,15 @@ import { useGetSingleChannel } from "@/features/channels/api/use-get-single-chan
 import { Header } from "./header";
 import { ChatInput } from "./chat-input";
 import { UseGetMessages } from "@/features/messages/api/use-get-message";
+import { MessageList } from "@/components/message-list";
 
 const ChannelIdPage = () => {
   const channelId = useChannelId();
-  const { results } = UseGetMessages({ channelId });
+  const { results, status, loadMore } = UseGetMessages({ channelId });
   const { data: singleChannel, isLoading: singleChannelLoading } =
     useGetSingleChannel({ id: channelId });
   console.log({ results }, "alll the message from channel id ");
-  if (singleChannelLoading) {
+  if (singleChannelLoading || status === "LoadingFirstPage") {
     return (
       <div className="h-full flex-1 flex items-center justify-center">
         <Loader className="size-6 animate-spin text-purple-800" />
@@ -39,7 +40,14 @@ const ChannelIdPage = () => {
   return (
     <div className="flex flex-col h-full">
       <Header title={singleChannel.name} />
-      <div className="flex-1">{JSON.stringify(results)}</div>
+      <MessageList
+        channelName={singleChannel.name}
+        channelCreationTime={singleChannel._creationTime}
+        data={results}
+        loadMore={loadMore}
+        isLoadingMore={status === "LoadingMore"}
+        canLoadMore={status === "CanLoadMore"}
+      ></MessageList>
       <ChatInput placeholder={`Message #${singleChannel.name}`} />
     </div>
   );
