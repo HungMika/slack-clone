@@ -101,7 +101,20 @@ export const get = query({
       )
       .order("desc")
       .paginate(args.paginationOpts);
-    return results;
+    return {
+      ...results,
+      page: await Promise.all(
+        results.page.map(async (message) => {
+          const member = await populateMember(ctx, message.memberId);
+          const user = member ? await populateUser(ctx, member.userId) : null;
+          if (!member || !user) {
+            return null;
+          }
+          const reactions = await populateReaction(ctx, message._id);
+          const thread = await populateThread(ctx, message._id);
+        }),
+      ),
+    };
   },
 });
 

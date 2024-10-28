@@ -12,12 +12,14 @@ import { useChannelId } from "@/hooks/use-channel-id";
 import { useGetSingleChannel } from "@/features/channels/api/use-get-single-channel";
 import { Header } from "./header";
 import { ChatInput } from "./chat-input";
+import { UseGetMessages } from "@/features/messages/api/use-get-message";
 
 const ChannelIdPage = () => {
   const channelId = useChannelId();
+  const { results } = UseGetMessages({ channelId });
   const { data: singleChannel, isLoading: singleChannelLoading } =
     useGetSingleChannel({ id: channelId });
-
+  console.log({ results }, "alll the message from channel id ");
   if (singleChannelLoading) {
     return (
       <div className="h-full flex-1 flex items-center justify-center">
@@ -37,7 +39,7 @@ const ChannelIdPage = () => {
   return (
     <div className="flex flex-col h-full">
       <Header title={singleChannel.name} />
-      <div className="flex-1" />
+      <div className="flex-1">{JSON.stringify(results)}</div>
       <ChatInput placeholder={`Message #${singleChannel.name}`} />
     </div>
   );
