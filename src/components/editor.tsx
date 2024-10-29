@@ -94,9 +94,8 @@ const Editor = ({
             shift_enter: {
               key: "Enter",
               shiftKey: true,
-              handle: () => {
+              handler: () => {
                 quill?.insertText(quill.getSelection()?.index || 0, "\n");
-                //return true;
               },
             },
           },
@@ -143,9 +142,7 @@ const Editor = ({
     quill?.insertText(quill?.getSelection()?.index || 0, emoji.native);
   };
 
-  //   quillRef.current?.gettext does not update when the text is changed.
   const isEmpty = !image && text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
-  //console.log({ isEmpty, text }, "yo");
   return (
     <div className="flex flex-col">
       <input
