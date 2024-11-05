@@ -17,12 +17,23 @@ export const Thumbnail = ({ url }: ThumbnailProps) => {
     return null;
   }
   return (
-    <div className="relative overflow-hidden max-w-[360px] border rounded-lg my-2 cursor-zoom-in">
-      <img
-        src={url}
-        alt={"Message IMG"}
-        className="rounded-md object-cover size-full"
-      ></img>
-    </div>
+    <Dialog>
+      <DialogTrigger>
+        <div className="relative overflow-hidden max-w-[360px] border rounded-lg my-2 cursor-zoom-in">
+          <img
+            src={url}
+            alt={"Message IMG"}
+            className="rounded-md object-cover size-full"
+          ></img>
+        </div>
+      </DialogTrigger>
+      <DialogContent>
+        <img
+          src={url}
+          alt={"Message IMG"}
+          className="rounded-md object-cover size-full"
+        ></img>
+      </DialogContent>
+    </Dialog>
   );
 };
