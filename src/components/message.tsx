@@ -3,6 +3,7 @@ import { Doc, Id } from "../../convex/_generated/dataModel";
 import { format, formatDate, isToday, isYesterday } from "date-fns";
 import { Hint } from "./hint";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { Thumbnail } from "./thumbnail";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 interface MessageProps {
@@ -64,6 +65,7 @@ export const Message = ({
           </Hint>
           <div className="flex flex-col w-full">
             <Renderer value={body} />
+            <Thumbnail url={image} />
             {updatedAt ? (
               <span className="text-xs text-muted-foreground">(edited)</span>
             ) : null}
@@ -106,6 +108,7 @@ export const Message = ({
             </Hint>
           </div>
           <Renderer value={body} />
+          <Thumbnail url={image} />
           {updatedAt ? (
             <span className="text-xs text-muted-foreground">(edited)</span>
           ) : null}
