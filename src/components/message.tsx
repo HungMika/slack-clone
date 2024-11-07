@@ -4,6 +4,7 @@ import { format, formatDate, isToday, isYesterday } from "date-fns";
 import { Hint } from "./hint";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Thumbnail } from "./thumbnail";
+import { Toolbar } from "./toolbar";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 interface MessageProps {
@@ -114,6 +115,17 @@ export const Message = ({
           ) : null}
         </div>
       </div>
+      {!isEditing && (
+        <Toolbar
+          isAuthor={isAuthor}
+          isPending={false}
+          handleEdit={() => setEditingId(id)}
+          handleThread={() => {}}
+          handleDelete={() => {}}
+          handleReaction={() => {}}
+          hideThreadButton={hideThreadButton}
+        />
+      )}
     </div>
   );
 };

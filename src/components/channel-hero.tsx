@@ -11,7 +11,7 @@ export const ChannelHero = ({ name, creatationTime }: ChannelHeroProps) => {
       <p className="text-2xl font-bold flex items-center mb-2"># {name}</p>
       <p className="font-normal text-slate-800 mb-4">
         This channel was created on{" "}
-        {format(new Date(creatationTime), "MMM d, yyyy")}. This is the beggining
+        {format(new Date(creatationTime), "MMM d, yyyy")}. This is the beginning
         of the <strong>{name}</strong> channel
       </p>
     </div>
