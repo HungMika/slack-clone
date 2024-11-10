@@ -47,7 +47,7 @@ export const MessageList = ({
       groups[dateKey].unshift(message);
       return groups;
     },
-    {} as Record<string, typeof data>
+    {} as Record<string, typeof data>,
   );
 
   const formatDateLabel = (dateString: string) => {
@@ -78,7 +78,7 @@ export const MessageList = ({
               prevMessage.user?._id === message.user?._id &&
               differenceInMinutes(
                 new Date(message._creationTime),
-                new Date(prevMessage._creationTime)
+                new Date(prevMessage._creationTime),
               ) < TIME_THREDHOLD;
 
             return (
