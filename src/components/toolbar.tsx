@@ -60,54 +60,36 @@ export const Toolbar = ({
           </Button>
         </EmojiPopover>
         {!hideThreadButton && (
-          <Hint label={`edit messages`}>
+          <Hint label={`Edit messages`}>
             <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
               <MessageSquareTextIcon className="size-4" />
             </Button>
           </Hint>
         )}
         {isAuthor && (
-          <Hint label={`edit messages`}>
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+          <Hint label={`Edit messages`}>
+            <Button
+              variant={"ghost"}
+              size={"iconSm"}
+              disabled={isPending}
+              onClick={handleEdit}
+            >
               <Pencil className="size-4" />
             </Button>
           </Hint>
         )}
         {isAuthor && (
-          <Hint label={`edit messages`}>
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+          <Hint label={`Edit messages`}>
+            <Button
+              variant={"ghost"}
+              size={"iconSm"}
+              disabled={isPending}
+              onClick={handleDelete}
+            >
               <Trash className="size-4" />
             </Button>
           </Hint>
         )}
-        {/* {allButton.map((button, index) => {
-          if (button.isShow) {
-            if (button.hoverOption === "popphover") {
-              return (
-                <EmojiPopover
-                  onEmojiSelect={(emoji) => handleReaction(emoji.native)}
-                >
-                  <Button
-                    variant={"ghost"}
-                    size={"iconSm"}
-                    disabled={isPending}
-                  >
-                    {button.icon}
-                  </Button>
-                </EmojiPopover>
-              );
-            }
-            return (
-              <Hint label={button.label} key={index}>
-                <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
-                  {button.icon}
-                </Button>
-              </Hint>
-            );
-          }
-        })} 
-        // another option
-        */}
       </div>
     </div>
   );
