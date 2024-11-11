@@ -56,7 +56,7 @@ export const Toolbar = ({
       <div className="group-hover:opacity-100 opacity-0 transition-opacity border bg-white rounded-md shadow-sm">
         <EmojiPopover onEmojiSelect={(emoji) => handleReaction(emoji.native)}>
           <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
-            <Smile className="size-4" />,
+            <Smile className="size-4" />
           </Button>
         </EmojiPopover>
         {!hideThreadButton && (

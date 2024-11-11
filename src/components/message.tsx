@@ -1,10 +1,12 @@
-import dynamic from "next/dynamic";
-import { Doc, Id } from "../../convex/_generated/dataModel";
-import { format, formatDate, isToday, isYesterday } from "date-fns";
 import { Hint } from "./hint";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { Thumbnail } from "./thumbnail";
 import { Toolbar } from "./toolbar";
+import { Thumbnail } from "./thumbnail";
+import { toast } from "sonner";
+import dynamic from "next/dynamic";
+import { format, formatDate, isToday, isYesterday } from "date-fns";
+import { useUpdateMessage } from "@/features/messages/api/use-update-message";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 interface MessageProps {
@@ -55,6 +57,26 @@ export const Message = ({
   threadImage,
   threadTimestamp,
 }: MessageProps) => {
+  const { mutate: updateMessage, isPending: isUpdatingMessage } =
+    useUpdateMessage();
+
+  const isPending = isUpdatingMessage;
+
+  const handleUpdate = ({ body }: { body: string }) => {
+    updateMessage(
+      { id, body },
+      {
+        onSuccess: () => {
+          toast.success("Message updated");
+          setEditingId(null);
+        },
+        onError: (error) => {
+          toast.error("Failed to update message");
+        },
+      },
+    );
+  };
+
   if (isCompact) {
     return (
       <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
@@ -72,6 +94,17 @@ export const Message = ({
             ) : null}
           </div>
         </div>
+        {!isEditing && (
+          <Toolbar
+            isAuthor={isAuthor}
+            isPending={false}
+            handleEdit={() => setEditingId(id)}
+            handleThread={() => {}}
+            handleDelete={() => {}}
+            handleReaction={() => {}}
+            hideThreadButton={hideThreadButton}
+          />
+        )}
       </div>
     );
   }
