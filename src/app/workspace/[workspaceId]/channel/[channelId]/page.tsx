@@ -18,9 +18,9 @@ import { MessageList } from "@/components/message-list";
 const ChannelIdPage = () => {
   const channelId = useChannelId();
   const { results, status, loadMore } = UseGetMessages({ channelId });
+  console.log("rerender whe new message do sthng ?");
   const { data: singleChannel, isLoading: singleChannelLoading } =
     useGetSingleChannel({ id: channelId });
-  console.log({ results }, "alll the message from channel id ");
   if (singleChannelLoading || status === "LoadingFirstPage") {
     return (
       <div className="h-full flex-1 flex items-center justify-center">
