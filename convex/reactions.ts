@@ -20,7 +20,7 @@ export const toggle = mutation({
 
     if (!member) throw new Error("Unauthorized");
 
-    const existingMeaasgeReactionFromUser = await ctx.db
+    const existingMessageReactionFromUser = await ctx.db
       .query("reactions")
       .filter((q) =>
         q.and(
@@ -31,17 +31,17 @@ export const toggle = mutation({
       )
       .first();
 
-
-    if (existingMeaasgeReactionFromUser) {
-        await ctx.db.delete(existingMeaasgeReactionFromUser._id);
-      } else {
-        await ctx.db.insert("reactions", {
-          messageId: message._id,
-          memberId: member._id,
-          value: args.value,
-          workspaceId: message.workspaceId,
-        });
-      }
-      
+    if (existingMessageReactionFromUser) {
+      await ctx.db.delete(existingMessageReactionFromUser._id);
+      return existingMessageReactionFromUser._id;
+    } else {
+      const newReactionId = await ctx.db.insert("reactions", {
+        messageId: message._id,
+        memberId: member._id,
+        value: args.value,
+        workspaceId: message.workspaceId,
+      });
+      return newReactionId;
+    }
   },
 });

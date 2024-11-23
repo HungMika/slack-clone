@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -70,7 +71,25 @@ export const Message = ({
 
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+
+  const { mutate: toggleReaction, isPending: isTogglingMessage } =
+    useToggleReaction();
+
   const isPending = isUpdatingMessage;
+
+  const handleReaction = (value: string) => {
+    toggleReaction(
+      {
+        messageId: id,
+        value,
+      },
+      {
+        onError: (error) => {
+          toast.error("Failed to add reaction");
+        },
+      },
+    );
+  };
 
   const handleUpdate = ({ body }: { body: string }) => {
     updateMessage(
@@ -148,7 +167,7 @@ export const Message = ({
               handleEdit={() => setEditingId(id)}
               handleThread={() => {}}
               handleDelete={handleRemoveMessage}
-              handleReaction={() => {}}
+              handleReaction={handleReaction}
               hideThreadButton={hideThreadButton}
             />
           )}
