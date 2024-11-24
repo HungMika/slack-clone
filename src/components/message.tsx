@@ -11,6 +11,7 @@ import { Doc, Id } from "../../convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
+import { Reactions } from "./reactions";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -64,7 +65,7 @@ export const Message = ({
 }: MessageProps) => {
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message?",
-    "this action cannot be undone",
+    "this action cannot be undone"
   );
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
@@ -87,7 +88,7 @@ export const Message = ({
         onError: (error) => {
           toast.error("Failed to add reaction");
         },
-      },
+      }
     );
   };
 
@@ -102,7 +103,7 @@ export const Message = ({
         onError: (error) => {
           toast.error("Failed to update message");
         },
-      },
+      }
     );
   };
 
@@ -119,7 +120,7 @@ export const Message = ({
         onError: (error) => {
           toast.error("Failed to remove message");
         },
-      },
+      }
     );
   };
   if (isCompact) {
@@ -129,7 +130,7 @@ export const Message = ({
         <div
           className={cn(
             "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
-            isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
+            isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
           )}
         >
           <div className="flex items-start gap-2">
@@ -157,6 +158,7 @@ export const Message = ({
                     (edited)
                   </span>
                 ) : null}
+                <Reactions data={reactions} onChange={handleReaction} />
               </div>
             )}
           </div>
@@ -186,7 +188,7 @@ export const Message = ({
           "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
           isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
           isRemovingMessage &&
-            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom hover:bg-[#f2c74433]",
+            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom hover:bg-[#f2c74433]"
         )}
       >
         <div className="flex items-start gap-2">
@@ -234,6 +236,7 @@ export const Message = ({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -244,7 +247,7 @@ export const Message = ({
             handleEdit={() => setEditingId(id)}
             handleThread={() => {}}
             handleDelete={handleRemoveMessage}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
             hideThreadButton={hideThreadButton}
           />
         )}
