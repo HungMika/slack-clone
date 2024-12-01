@@ -174,6 +174,33 @@ export const get = query({
   },
 });
 
+export const getById = query({
+  args: {
+    id: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const message = await ctx.db.get(args.id);
+    if (!message) {
+      return null;
+    }
+
+    const member = await populateMember(ctx, message.memberId);
+    if (!member) {
+      return null;
+    }
+
+    const user = await populateUser(ctx, member.userId);
+    if (!user) {
+      return null;
+    }
+  },
+});
+
 export const create = mutation({
   args: {
     body: v.string(),

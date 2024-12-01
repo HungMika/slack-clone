@@ -1,20 +1,23 @@
 import { Hint } from "./hint";
 import { Toolbar } from "./toolbar";
 import { Thumbnail } from "./thumbnail";
+import { Reactions } from "./reactions";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { format, isToday, isYesterday } from "date-fns";
+import { Doc, Id } from "../../convex/_generated/dataModel";
+
+import { usePanel } from "@/hooks/use-panel";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useUpdateMessage } from "@/features/messages/api/use-update-message";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { Doc, Id } from "../../convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { useConfirm } from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
-import { Reactions } from "./reactions";
 
-const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
+const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 interface MessageProps {
   id: Id<"messages">;
   memberId: Id<"members">;
@@ -63,9 +66,11 @@ export const Message = ({
   threadImage,
   threadTimestamp,
 }: MessageProps) => {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message?",
-    "this action cannot be undone"
+    "this action cannot be undone",
   );
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
@@ -88,7 +93,7 @@ export const Message = ({
         onError: (error) => {
           toast.error("Failed to add reaction");
         },
-      }
+      },
     );
   };
 
@@ -103,7 +108,7 @@ export const Message = ({
         onError: (error) => {
           toast.error("Failed to update message");
         },
-      }
+      },
     );
   };
 
@@ -115,12 +120,14 @@ export const Message = ({
       {
         onSuccess: () => {
           toast.success("Message removed");
-          // todo handle removing thread
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: (error) => {
           toast.error("Failed to remove message");
         },
-      }
+      },
     );
   };
   if (isCompact) {
@@ -130,7 +137,7 @@ export const Message = ({
         <div
           className={cn(
             "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
-            isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+            isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
           )}
         >
           <div className="flex items-start gap-2">
@@ -167,7 +174,7 @@ export const Message = ({
               isAuthor={isAuthor}
               isPending={isPending}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleDelete={handleRemoveMessage}
               handleReaction={handleReaction}
               hideThreadButton={hideThreadButton}
@@ -188,7 +195,7 @@ export const Message = ({
           "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
           isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
           isRemovingMessage &&
-            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom hover:bg-[#f2c74433]"
+            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom hover:bg-[#f2c74433]",
         )}
       >
         <div className="flex items-start gap-2">
@@ -245,7 +252,7 @@ export const Message = ({
             isAuthor={isAuthor}
             isPending={isPending}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleDelete={handleRemoveMessage}
             handleReaction={handleReaction}
             hideThreadButton={hideThreadButton}
