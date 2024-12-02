@@ -90,7 +90,7 @@ export const Message = ({
         value,
       },
       {
-        onError: (error) => {
+        onError: () => {
           toast.error("Failed to add reaction");
         },
       },
@@ -105,7 +105,7 @@ export const Message = ({
           toast.success("Message updated");
           setEditingId(null);
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Failed to update message");
         },
       },
@@ -124,7 +124,7 @@ export const Message = ({
             onClose();
           }
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Failed to remove message");
         },
       },

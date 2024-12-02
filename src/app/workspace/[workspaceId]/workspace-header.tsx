@@ -89,12 +89,12 @@ export const WorkspaceHeader = ({
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="flex items-center gap-0.5">
-          <Hint label="Filter conversations" side="bottom">
+          <Hint label="New message" side="bottom">
             <Button variant="transparent" size="iconSm">
               <SquarePen className="size-4" />
             </Button>
           </Hint>
-          <Hint label="New message" side="bottom">
+          <Hint label="Filter conversations" side="bottom">
             <Button variant="transparent" size="iconSm">
               <Filter className="size-4" />
             </Button>
