@@ -9,6 +9,7 @@ interface UseGetSingleMessageProps {
 
 export const useGetSingleMessage = ({ id }: UseGetSingleMessageProps) => {
   const data = useQuery(api.messages.getById, { id });
+  console.log(data);
   const isLoading = data === undefined;
 
   return { data, isLoading };

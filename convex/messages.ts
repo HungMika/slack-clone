@@ -180,29 +180,19 @@ export const getById = query({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return null;
-    }
+    if (!userId) return null;
 
     const message = await ctx.db.get(args.id);
-    if (!message) {
-      return null;
-    }
+    if (!message) return null;
 
     const currentMember = await getMember(ctx, message.workspaceId, userId);
-    if (!currentMember) {
-      return null;
-    }
+    if (!currentMember) return null;
 
     const member = await populateMember(ctx, message.memberId);
-    if (!member) {
-      return null;
-    }
+    if (!member) return null;
 
     const user = await populateUser(ctx, member.userId);
-    if (!user) {
-      return null;
-    }
+    if (!user) return null;
 
     const reactions = await populateReaction(ctx, message._id);
     const reactionsWithCounts = reactions.map((reaction) => {
