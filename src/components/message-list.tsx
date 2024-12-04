@@ -32,7 +32,7 @@ export const MessageList = ({
   isLoadingMore,
   canLoadMore,
 }: MessageListProps) => {
-  const [edittingId, setEditingId] = useState<Id<"messages"> | null>(null);
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
   const workspaceId = useWorkspaceId();
 
@@ -95,7 +95,7 @@ export const MessageList = ({
                 image={message.image}
                 updatedAt={message.updatedAt}
                 createdAt={message._creationTime}
-                isEditing={edittingId === message._id}
+                isEditing={editingId === message._id}
                 setEditingId={setEditingId}
                 isCompact={isCompact}
                 hideThreadButton={variant === "thread"}

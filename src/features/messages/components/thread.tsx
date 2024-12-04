@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 
 import Quill from "quill";
+import { toast } from "sonner";
+import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Loader, XIcon } from "lucide-react";
@@ -8,15 +10,16 @@ import { Id } from "../../../../convex/_generated/dataModel";
 
 import { Message } from "@/components/message";
 import { useChannelId } from "@/hooks/use-channel-id";
+import { UseGetMessages } from "../api/use-get-message";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useCreateMessage } from "../api/use-create-message";
 import { useGetSingleMessage } from "../api/use-get-single-message";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
-import { toast } from "sonner";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
+const TIME_THREDHOLD = 5;
 interface ThreadProps {
   messageId: Id<"messages">;
   onClose: () => void;
@@ -28,6 +31,17 @@ type CreateMessageValues = {
   parentMessageId: Id<"messages">;
   body: string;
   image: Id<"_storage"> | undefined;
+};
+
+const formatDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+  if (isToday(date)) {
+    return "Today";
+  }
+  if (isYesterday(date)) {
+    return "Yesterday";
+  }
+  return format(date, "EEEEE, MMM d");
 };
 
 export const Thread = ({ messageId, onClose }: ThreadProps) => {
@@ -42,6 +56,13 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
   const { data: message, isLoading: loadingMessage } = useGetSingleMessage({
     id: messageId,
   });
+  const { results, status, loadMore } = UseGetMessages({
+    channelId,
+    parentMessageId: messageId,
+  });
+
+  const canLoadMore = status === "CanLoadMore";
+  const isLoadingMore = status === "LoadingMore";
 
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
@@ -99,7 +120,20 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
     }
   };
 
-  if (loadingMessage) {
+  const groupedMessages = results?.reduce(
+    (groups, message) => {
+      const date = new Date(message._creationTime);
+      const dateKey = format(date, "yyyy-MM-dd");
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].unshift(message);
+      return groups;
+    },
+    {} as Record<string, typeof results>,
+  );
+
+  if (loadingMessage || status === "LoadingFirstPage") {
     return (
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
@@ -140,7 +174,79 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
           <XIcon className="size-5 stroke-[1.5]" />
         </Button>
       </div>
-      <div>
+      <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
+        {Object.entries(groupedMessages || {}).map(([dateKey, messages]) => (
+          <div key={dateKey}>
+            <div className="text-center my-2 relative">
+              <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+              <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+                {formatDateLabel(dateKey)}
+              </span>
+            </div>
+            {messages.map((message, index) => {
+              const prevMessage = messages[index - 1];
+              const isCompact =
+                prevMessage &&
+                prevMessage.user?._id === message.user?._id &&
+                differenceInMinutes(
+                  new Date(message._creationTime),
+                  new Date(prevMessage._creationTime),
+                ) < TIME_THREDHOLD;
+
+              return (
+                <Message
+                  key={message._id}
+                  id={message._id}
+                  memberId={message.memberId}
+                  authorImage={message.user.image}
+                  authorName={message.user.name}
+                  isAuthor={message.memberId === currentMember?._id}
+                  reactions={message.reactions}
+                  body={message.body}
+                  image={message.image}
+                  updatedAt={message.updatedAt}
+                  createdAt={message._creationTime}
+                  isEditing={editingId === message._id}
+                  setEditingId={setEditingId}
+                  isCompact={isCompact}
+                  hideThreadButton
+                  threadCount={message.threadCount}
+                  threadImage={message.threadImage}
+                  threadTimestamp={message.threadTimestamp}
+                />
+              );
+            })}
+          </div>
+        ))}
+        <div
+          className="h-1"
+          ref={(el) => {
+            if (el) {
+              const observer = new IntersectionObserver(
+                ([entries]) => {
+                  if (entries.isIntersecting && canLoadMore) {
+                    loadMore();
+                  }
+                },
+                {
+                  threshold: 1,
+                },
+              );
+              observer.observe(el);
+              return () => {
+                observer.disconnect();
+              };
+            }
+          }}
+        />
+        {isLoadingMore && (
+          <div>
+            <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+            <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+              <Loader className="animate-spin" />
+            </span>
+          </div>
+        )}
         <Message
           hideThreadButton
           memberId={message.memberId}
