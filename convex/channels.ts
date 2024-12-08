@@ -17,7 +17,7 @@ export const create = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .unique();
 
@@ -50,7 +50,7 @@ export const update = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
       )
       .unique();
 
@@ -78,11 +78,23 @@ export const remove = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
       )
       .unique();
 
     if (!member || member.role !== "admin") throw new Error("Unauthorized");
+
+    const [messages] = await Promise.all([
+      ctx.db
+        .query("messages")
+        .withIndex("by_channel_id", (q) => q.eq("channelId", args.id))
+        .collect(),
+    ]);
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
 
     await ctx.db.delete(args.id);
     //TODO: remove associated messages
@@ -105,7 +117,7 @@ export const getById = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
       )
       .unique();
 
@@ -128,7 +140,7 @@ export const get = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .unique();
 
@@ -137,7 +149,7 @@ export const get = query({
     const channels = await ctx.db
       .query("channels")
       .withIndex("by_workspace_id", (q) =>
-        q.eq("workspaceId", args.workspaceId),
+        q.eq("workspaceId", args.workspaceId)
       )
       .collect();
 
