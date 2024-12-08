@@ -21,12 +21,12 @@ export const Conversation = ({ id }: ConversationProps) => {
   if (memberLoading || status === "LoadingFirstPage")
     return (
       <div className="h-full flex items-center jusitfy-center">
-        <Loader className="size-6 animate-spin text-muted-foreground"></Loader>
+        <Loader className="size-6 animate-spin text-purple-800"></Loader>
       </div>
     );
 
   return (
-    <div className="flex felx-col h-full">
+    <div className="flex flex-col h-full">
       <Header
         memberName={member?.user.name}
         memberImage={member?.user.image}

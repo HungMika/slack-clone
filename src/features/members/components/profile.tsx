@@ -1,23 +1,45 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { useGetMember } from "../api/use-get-member";
-import { useGetSingleMember } from "../api/use-get-single-member";
-import { AlertTriangle, Loader, Mail, MailIcon, XIcon } from "lucide-react";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { AvatarFallback } from "@/components/ui/avatar";
+import {
+  AlertTriangle,
+  ChevronDownIcon,
+  Loader,
+  Mail,
+  MailIcon,
+  XIcon,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { useUpdateMember } from "../api/use-update-member";
+import { useRemoveMember } from "../api/use-remove-member";
+import { useCurrentMember } from "../api/use-current-member";
+import { useGetSingleMember } from "../api/use-get-single-member";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 interface ProfileProps {
   memberId: Id<"members">;
   onClose: () => void;
 }
 
 export const Profile = ({ memberId, onClose }: ProfileProps) => {
+  const workspaceId = useWorkspaceId();
+
   const { data: member, isLoading: isLoadingMember } = useGetSingleMember({
     id: memberId,
   });
+  const { data: currentMember, isLoading: isLoadingCurrentMember } =
+    useCurrentMember({
+      workspaceId,
+    });
 
-  if (isLoadingMember) {
+  const { mutate: updateMember, isPending: isUpdatingMember } =
+    useUpdateMember();
+  const { mutate: removeMember, isPending: isRemovingMember } =
+    useRemoveMember();
+
+  if (isLoadingMember || isLoadingCurrentMember) {
     return (
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
@@ -27,7 +49,7 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
           </Button>
         </div>
         <div className="flex h-full items-center justify-center">
-          <Loader className="size-5 animate-spin text-muted-foreground" />
+          <Loader className="size-6 animate-spin text-purple-800" />
         </div>
       </div>
     );
@@ -43,14 +65,14 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
           </Button>
         </div>
         <div className="flex flex-col gap-y-2 h-full items-center justify-center">
-          <AlertTriangle className="size-5 text-muted-foreground" />
+          <AlertTriangle className="size-5 text-yellow-600" />
           <p className="text-sm text-muted-foreground">No messages found</p>
         </div>
       </div>
     );
   }
 
-  const avatarFallback = member.user.name?.[0] ?? "M";
+  const avatarFallback = member.user.name?.[0].charAt(0).toUpperCase() ?? "M";
   return (
     <div className="h-full flex flex-col">
       <div className="h-[49px] flex justify-between items-center px-4 border-b">
@@ -69,6 +91,16 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
       </div>
       <div className="flex flex-col p-4">
         <p className="text-xl font-bold">{member.user.name}</p>
+        {currentMember?.role === "admin" && currentMember?._id !== memberId ? (
+          <div className="flex items-center gap-2 mt-4">
+            <Button variant={"outline"} className="w-full capitalize">
+              {member.role} <ChevronDownIcon className="size-4 ml-2" />
+            </Button>
+            <Button variant={"destructive"} className="w-full">
+              Remove
+            </Button>
+          </div>
+        ) : null}
       </div>
       <Separator />
       <div className="flex flex-col p-4">
@@ -83,8 +115,10 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
             </p>
             <Link
               href={`mailto:${member.user.email}`}
-              className="text-sm hover:underline text-[#126a3]"
-            ></Link>
+              className="text-sm hover:underline text-[#1264a3]"
+            >
+              {member.user.email}
+            </Link>
           </div>
         </div>
       </div>
