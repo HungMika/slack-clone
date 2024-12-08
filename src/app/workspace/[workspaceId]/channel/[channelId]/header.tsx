@@ -40,7 +40,7 @@ export const Header = ({ title }: HeaderProps) => {
 
   const { data: member } = useCurrentMember({ workspaceId });
   const handleEditOpen = (value: boolean) => {
-    if (member?.role === "admin") return;
+    if (member?.role !== "admin") return;
     setEditOpen(value);
   };
 

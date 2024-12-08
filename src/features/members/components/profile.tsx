@@ -37,15 +37,15 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
   const router = useRouter();
   const [UpdateDialog, confirmUpdateDialog] = useConfirm(
     "Change role?",
-    "are  you sure you want to leave this workspace?",
+    "Are you sure you want to change this member's role?",
   );
   const [LeaveDialog, confirmLeave] = useConfirm(
     "Leave workspace?",
-    "are  you sure you want to leave this workspace?",
+    "Are you sure you want to leave this workspace?",
   );
   const [RemoveDialog, confirmRemove] = useConfirm(
-    "remove member",
-    "are  you sure you want to remove this member?",
+    "Remove member",
+    "Are you sure you want to remove this member?",
   );
   const workspaceId = useWorkspaceId();
 
