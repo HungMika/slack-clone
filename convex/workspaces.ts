@@ -21,6 +21,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     //const userId = await auth.getUserId(ctx);
     const userId = await getAuthUserId(ctx);
+    console.log("Auth context in create mutation:", ctx.auth);
 
     if (!userId) {
       throw new Error("Unauthorized");
