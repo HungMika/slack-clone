@@ -53,7 +53,7 @@ export const Reactions = ({ data, onChange }: ReactionsProps) => {
       ))}
       <EmojiPopover
         hint="Add a reaction"
-        onEmojiSelect={(emoji) => onChange?.(emoji.native)}
+        onEmojiSelect={(emoji) => onChange?.(emoji)}
       >
         <button
           className={cn(
