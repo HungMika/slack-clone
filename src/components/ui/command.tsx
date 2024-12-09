@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import PropTypes from "prop-types";
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -39,7 +40,7 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+  <div className="flex items-center border-b px-3 cmdk-input-wrapper">
     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
@@ -139,6 +140,38 @@ const CommandShortcut = ({
   );
 };
 CommandShortcut.displayName = "CommandShortcut";
+
+// Command.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandInput.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandList.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandEmpty.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandGroup.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandSeparator.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandItem.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// CommandShortcut.propTypes = {
+//   className: PropTypes.string,
+// };
 
 export {
   Command,

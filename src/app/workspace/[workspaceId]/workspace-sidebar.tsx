@@ -89,7 +89,7 @@ export const WorkSpaceSideBar = () => {
         //onNew={() => {}}
       >
         {members?.map((item) => (
-          <div>
+          <div key={item._id}>
             <UserItem
               id={item._id}
               key={item._id}

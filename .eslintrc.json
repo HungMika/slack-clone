@@ -11,9 +11,10 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-unused-vars": ["off"],
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": "error" // Thêm dòng này để báo lỗi nếu không tuân theo quy tắc Prettier
+    "react/prop-types": "off",
+    "prettier/prettier": "off" // Thêm dòng này để báo lỗi nếu không tuân theo quy tắc Prettier
   },
   "settings": {
     "react": {

@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import PropTypes from "prop-types";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -107,6 +108,30 @@ const DialogDescription = React.forwardRef<
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+// DialogHeader.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// DialogFooter.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// DialogOverlay.propTypes = {
+//   className: PropTypes.string,
+// };
+
+// DialogContent.propTypes = {
+//   className: PropTypes.string,
+//   children: PropTypes.node,
+// };
+
+// DialogTitle.propTypes = {
+//   className: PropTypes.string,
+// };
+// DialogDescription.propTypes = {
+//   className: PropTypes.string,
+// };
 
 export {
   Dialog,
