@@ -137,10 +137,24 @@ const Editor = ({
     }
   };
 
+  // const onEmojiSelect = (emojivalue: string) => {
+  //   const quill = quillRef.current;
+  //   quill?.insertText(quill?.getSelection()?.index || 0, emojivalue);
+  // };
+
   const onEmojiSelect = (emojivalue: string) => {
     const quill = quillRef.current;
-    quill?.insertText(quill?.getSelection()?.index || 0, emojivalue);
+    if (!quill) return;
+  
+    const selection = quill.getSelection();
+    
+    const index = selection?.index ?? quill.getLength(); 
+  
+    quill.insertText(index, emojivalue);
+  
+    quill.setSelection(index + emojivalue.length);
   };
+  
 
   const isEmpty = !image && text.replace(/<(.|\n*?)>/g, "").trim().length === 0;
   return (
