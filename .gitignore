@@ -37,3 +37,5 @@ next-env.d.ts
 
 # js
 generateKeys.mjs
+
+.env.local
