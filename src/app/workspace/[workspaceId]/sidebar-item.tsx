@@ -24,7 +24,7 @@ const sidebarItemVariant = cva(
 
 interface SidebarItemProps {
   label: string;
-  id: string;
+  id?: string;
   icon: LucideIcon | IconType;
   variant?: VariantProps<typeof sidebarItemVariant>["variant"];
 }
