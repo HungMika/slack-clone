@@ -68,7 +68,7 @@ export const Header = ({ title }: HeaderProps) => {
           router.push(`/workspace/${workspaceId}`);
         },
         onError: () => {
-          toast.error("Something went wrong,failed to delete channel");
+          toast.error("Something went wrong, failed to delete channel");
         },
       },
     );

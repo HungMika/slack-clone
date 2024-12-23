@@ -18,6 +18,7 @@ export const ThreadBar = ({
 }: ThreadBarProps) => {
   const avatarFallback = name.charAt(0).toUpperCase();
   if (!count || !timestamp) return null;
+  const displayCount = count > 99 ? "+99" : count;
   return (
     <button
       onClick={onClick}
@@ -31,7 +32,7 @@ export const ThreadBar = ({
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <span className="text-xs text-sky-700 hover:underline font-bold truncate">
-          {count} {count > 1 ? "replies" : "reply"}
+          {displayCount} {count > 1 ? "replies" : "reply"}
         </span>
         <span className="text-xs text-muted-foreground truncate group-hover/thread-bar:hidden block">
           Last reply {formatDistanceToNow(timestamp, { addSuffix: true })}
