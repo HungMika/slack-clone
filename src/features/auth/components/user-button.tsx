@@ -63,29 +63,29 @@ export const UserButton = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     try {
       setIsUpdating(true);
-
-      let imageUrl = null;
+  
+      let imageStorageId = null;
       if (image) {
         const uploadUrl = await generateUploadUrl({}, { throwError: true });
         if (!uploadUrl) throw new Error("Failed to generate upload URL");
-
+  
         const response = await fetch(uploadUrl, {
           method: "POST",
           headers: { "Content-Type": image.type },
           body: image,
         });
-
+  
         if (!response.ok) throw new Error("Failed to upload image");
-
+  
         const { storageId } = await response.json();
-        imageUrl = storageId;
+        imageStorageId = storageId;
       }
-
+  
       await updateUser(
-        { name: name || userName, image: imageUrl || userImage },
+        { name, image: imageStorageId },
         {
           onSuccess: () => {
             toast.success("Profile updated successfully!");
@@ -102,6 +102,7 @@ export const UserButton = () => {
       setIsUpdating(false);
     }
   };
+  
 
   return (
     <>

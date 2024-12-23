@@ -7,7 +7,6 @@ export const current = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    //const userId = await auth.getUserId(ctx);
 
     if (userId === null) {
       return null;
@@ -19,7 +18,7 @@ export const current = query({
 export const updateProfile = mutation({
   args: {
     name: v.optional(v.string()),
-    image: v.optional(v.string()),
+    image: v.optional(v.string()), 
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -37,12 +36,17 @@ export const updateProfile = mutation({
     if (args.name !== undefined) {
       updates.name = args.name;
     }
+
     if (args.image !== undefined) {
-      updates.image = args.image;
+      const imageUrl = await ctx.storage.getUrl(args.image);
+      if (!imageUrl) {
+        throw new Error("Failed to generate image URL");
+      }
+      updates.image = imageUrl;
     }
 
     if (Object.keys(updates).length === 0) {
-      return userId;
+      return userId; 
     }
 
     await ctx.db.patch(userId, updates);
