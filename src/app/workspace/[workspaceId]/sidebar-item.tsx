@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 const sidebarItemVariant = cva(
@@ -19,12 +20,12 @@ const sidebarItemVariant = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 interface SidebarItemProps {
   label: string;
-  id?: string;
+  id: string;
   icon: LucideIcon | IconType;
   variant?: VariantProps<typeof sidebarItemVariant>["variant"];
 }
@@ -37,7 +38,13 @@ export const SidebarItem = ({
 }: SidebarItemProps) => {
   const workspaceId = useWorkspaceId();
 
-  return (
+  const handleClick = () => {
+    if (!id) {
+      toast.error("Sorry, this function is updating.");
+    }
+  };
+
+  return id ? (
     <Button
       variant="transparent"
       size="sm"
@@ -48,6 +55,16 @@ export const SidebarItem = ({
         <Icon className="size-3.5 mr-1 shrink-0" />
         <span className="text-sm truncate">{label}</span>
       </Link>
+    </Button>
+  ) : (
+    <Button
+      variant="transparent"
+      size="sm"
+      className={cn(sidebarItemVariant({ variant }))}
+      onClick={handleClick}
+    >
+      <Icon className="size-3.5 mr-1 shrink-0" />
+      <span className="text-sm truncate">{label}</span>
     </Button>
   );
 };
