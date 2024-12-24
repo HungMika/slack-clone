@@ -38,7 +38,6 @@ export const update = mutation({
   args: {
     id: v.id("channels"),
     name: v.string(),
-    //workspaceId: v.id("workspaces")
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);

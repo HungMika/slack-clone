@@ -86,7 +86,7 @@ export const Header = ({ title }: HeaderProps) => {
           setEditOpen(false);
         },
         onError: () => {
-          toast.error("Something went wrong,failed to update channel");
+          toast.error("Failed to update channel");
         },
       },
     );
