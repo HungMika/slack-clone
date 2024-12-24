@@ -67,7 +67,7 @@ export const InviteModal = ({
             Use the below code to invite people to your workspace
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-y-4 py-4 justify-center">
+        <div className="flex flex-col items-center gap-y-4 py-4 justify-center text-black">
           <p className="text-4xl font-bold tracking-widest uppercase">
             {joinCode}
           </p>
@@ -76,7 +76,7 @@ export const InviteModal = ({
             <CopyIcon className="size-4 ml-2" />
           </Button>
         </div>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full text-black">
           <Button
             disabled={isPending}
             onClick={handleRefreshCode}
