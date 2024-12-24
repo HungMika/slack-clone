@@ -29,7 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let finalStyle = { pointerEvents: "auto" };
+  const finalStyle = { pointerEvents: "auto" };
   console.log("debug rerender ");
 
   return (
