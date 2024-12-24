@@ -200,7 +200,7 @@ const Editor = ({
             </div>
           </div>
         )}
-        <div className="flex px-2 pb-2 z-[5]">
+        <div className="flex px-2 pb-2 z-[5] text-black">
           <Hint
             label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
           >
