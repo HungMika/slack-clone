@@ -32,7 +32,7 @@ export const Header = ({ title }: HeaderProps) => {
   const channelId = useChannelId();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete this channel?",
-    "This action cannot be undone",
+    "This action cannot be undone"
   );
 
   const [value, setValue] = useState(title);
@@ -70,7 +70,7 @@ export const Header = ({ title }: HeaderProps) => {
         onError: () => {
           toast.error("Something went wrong, failed to delete channel");
         },
-      },
+      }
     );
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -88,7 +88,7 @@ export const Header = ({ title }: HeaderProps) => {
         onError: () => {
           toast.error("Failed to update channel");
         },
-      },
+      }
     );
   };
 
@@ -140,15 +140,16 @@ export const Header = ({ title }: HeaderProps) => {
                     maxLength={80}
                     placeholder="e.g. out-space"
                   />
+
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant={"outline"} disabled={isUpdatingChannel}>
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button disabled={isUpdatingChannel}>Save</Button>
+                  </DialogFooter>
                 </form>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant={"outline"} disabled={isUpdatingChannel}>
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button disabled={isUpdatingChannel}>Save</Button>
-                </DialogFooter>
               </DialogContent>
             </Dialog>
             {member?.role === "admin" && (
