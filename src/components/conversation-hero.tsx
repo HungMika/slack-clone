@@ -13,7 +13,7 @@ export const ConversationHero = ({
   const avatarfallback = name.charAt(0).toUpperCase();
 
   return (
-    <div className="mt-[88px] mx-5 mb-4 ">
+    <div className="mt-[88px] mx-5 mb-4 text-black">
       <div className="flex items-center gap-x-1 mb-2">
         <Avatar className="size-14 mr-2">
           <AvatarImage src={image} />
