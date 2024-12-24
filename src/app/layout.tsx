@@ -29,11 +29,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let finalStyle = { pointerEvents: "auto" };
+  console.log("debug rerender ");
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          style={{ pointerEvents: "auto" }}
         >
           <ConvexClientProvider>
             <JotaiProvider>
