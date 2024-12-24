@@ -113,7 +113,7 @@ export const Header = ({ title }: HeaderProps) => {
           <div className="px-4 pb-4 flex flex-col gap-y-2">
             <Dialog open={editOpen} onOpenChange={handleEditOpen}>
               <DialogTrigger asChild>
-                <div className="px-5 py-4 bg-white rounded-lg border cursor-pointer hover:bg-gray-50">
+                <div className="px-5 py-4 bg-white text-black rounded-lg border cursor-pointer hover:bg-gray-50">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold">Channel name</p>
                     {member?.role === "admin" && (
