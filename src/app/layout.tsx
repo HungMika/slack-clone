@@ -31,6 +31,7 @@ export default function RootLayout({
 }>) {
   let finalStyle = { pointerEvents: "auto" };
   console.log("debug rerender ");
+
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
