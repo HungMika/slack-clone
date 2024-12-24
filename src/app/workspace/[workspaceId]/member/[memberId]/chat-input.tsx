@@ -18,7 +18,7 @@ interface ChatInputProps {
 }
 
 type CreateMessageValues = {
-  converationId: Id<"conversations">;
+  conversationId: Id<"conversations">;
   workspaceId: Id<"workspaces">;
   body: string;
   image: Id<"_storage"> | undefined;
@@ -46,7 +46,7 @@ export const ChatInput = ({ placeholder, converationId }: ChatInputProps) => {
     try {
       setIsPending(true);
       const values: CreateMessageValues = {
-        converationId,
+        conversationId:converationId,
         workspaceId,
         body,
         image: undefined,
