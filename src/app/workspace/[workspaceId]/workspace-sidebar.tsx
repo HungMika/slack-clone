@@ -45,7 +45,8 @@ export const WorkSpaceSideBar = () => {
     workspaceId,
   });
 
-  console.log("allNoti " + allnotifications);
+  console.log("allNoti " + allnotifications?.data);
+
   //log all notifications
 
   const handleFilterNotifications = ({ ChannelId }: { ChannelId: string }) => {
