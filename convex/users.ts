@@ -40,6 +40,7 @@ export const updateProfile = mutation({
     if (args.image !== undefined) {
       const imageUrl = await ctx.storage.getUrl(args.image);
       if (!imageUrl) {
+        updates.image = undefined;
         throw new Error("Failed to generate image URL");
       }
       updates.image = imageUrl;
