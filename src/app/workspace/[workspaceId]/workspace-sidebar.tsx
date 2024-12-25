@@ -23,6 +23,7 @@ import { useCreateChannelModal } from "@/features/channels/store/use-create-chan
 import { useSearchParams } from "next/navigation";
 import { useGetUserHistory } from "@/features/messages/api/use-get-user-history";
 import { useCurrentUser } from "@/features/auth/api/use-current-user";
+import { console } from "inspector";
 
 export const WorkSpaceSideBar = () => {
   const allnotifications = useGetUserHistory();
@@ -44,6 +45,10 @@ export const WorkSpaceSideBar = () => {
   const { data: members, isLoading: membersLoading } = useGetMember({
     workspaceId,
   });
+
+  console.log("allNoti " + allnotifications);
+  //log all notifications
+
   const handleFilterNotifications = ({ ChannelId }: { ChannelId: string }) => {
     // NOTE(Khang): this array have all the info of all message related to the current user
     // NOTE(Khang): get the memberID of the user in the channel then from that we can filter out the notifiations
@@ -62,6 +67,7 @@ export const WorkSpaceSideBar = () => {
         return checkIsinChannel && checkIfMemberSeen;
       }
     );
+    console.log("filteredNotifications", filteredNotifications);
     return filteredNotifications?.length;
   };
   // console.log("debug conser info: ", allnotifications?.data?.arrayWithConversationInfo);
