@@ -45,7 +45,7 @@ export const WorkSpaceSideBar = () => {
     workspaceId,
   });
 
-  console.log("allNoti " + allnotifications?.data);
+  console.log("allNoti " + allnotifications?.data?.allConversationInfo);
 
   //log all notifications
 
