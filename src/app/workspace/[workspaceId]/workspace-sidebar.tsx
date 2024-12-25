@@ -66,7 +66,8 @@ export const WorkSpaceSideBar = () => {
       }
     );
     console.log("debug thtnththt: ", filteredNotifications);
-    return filteredNotifications?.length;
+    return 0
+    // return filteredNotifications?.length;
   };
   // console.log("debug conser info: ", allnotifications?.data?.arrayWithConversationInfo);
   const handleFilterConvertations = ({
