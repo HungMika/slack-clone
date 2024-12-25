@@ -65,7 +65,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
 
   const canLoadMore = status === "CanLoadMore";
   const isLoadingMore = status === "LoadingMore";
-  const currentUser = useCurrentUser()
+  const currentUser = useCurrentUser();
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<Quill | null>(null);
@@ -122,26 +122,30 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
       editorRef.current?.enable(true);
     }
   };
-  const { mutate: useMessageSeenUpdate } = useMessageSeen();
-  console.log("debug 222", results)
-  const handleUpdateSeen = () => {
-    console.log("handleUpdateSeen",results);
-    results.forEach(async (result) => {
-      let seenMembers = result.seenMembers;
+  const { mutate: messageSeenUpdate } = useMessageSeen(); // Gọi hook để lấy hàm mutate trước
+
+  const handleUpdateSeen = async () => {
+    console.log("handleUpdateSeen", results);
+
+    for (const result of results) {
+      // Sử dụng for...of để tuần tự xử lý
+      const seenMembers = result.seenMembers;
       if (!seenMembers) {
-        return;
+        continue;
       }
 
       if (currentUser.data && seenMembers.includes(currentUser.data._id)) {
         const finalArray = seenMembers.filter(
           (member) => member !== currentUser.data?._id
         );
-        await useMessageSeenUpdate({
+
+        // Sử dụng mutate như một hàm thông thường
+        await messageSeenUpdate({
           id: result._id,
           seenMembers: finalArray,
         });
       }
-    });
+    }
   };
   useEffect(() => {
     handleUpdateSeen();
@@ -156,7 +160,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
       groups[dateKey].unshift(message);
       return groups;
     },
-    {} as Record<string, typeof results>,
+    {} as Record<string, typeof results>
   );
 
   if (loadingMessage || status === "LoadingFirstPage") {
@@ -216,7 +220,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
                 prevMessage.user?._id === message.user?._id &&
                 differenceInMinutes(
                   new Date(message._creationTime),
-                  new Date(prevMessage._creationTime),
+                  new Date(prevMessage._creationTime)
                 ) < TIME_THREDHOLD;
 
               return (
@@ -257,7 +261,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
                 },
                 {
                   threshold: 1,
-                },
+                }
               );
               observer.observe(el);
               return () => {

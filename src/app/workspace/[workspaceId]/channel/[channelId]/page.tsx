@@ -26,13 +26,16 @@ const ChannelIdPage = () => {
   const { data: singleChannel, isLoading: singleChannelLoading } =
     useGetSingleChannel({ id: channelId });
 
-  const { mutate: useMessageSeenUpdate } = useMessageSeen();
-  const handleUpdateSeen = () => {
-    console.log("handleUpdateSeen",results);
-    results.forEach(async (result) => {
-      let seenMembers = result.seenMembers;
+  const { mutate: messageSeenUpdate } = useMessageSeen(); // Gọi hook để lấy hàm mutate trước
+
+  const handleUpdateSeen = async () => {
+    console.log("handleUpdateSeen", results);
+
+    for (const result of results) {
+      // Sử dụng for...of để tuần tự xử lý
+      const seenMembers = result.seenMembers;
       if (!seenMembers) {
-        return;
+        continue;
       }
 
       if (currentUser.data && seenMembers.includes(currentUser.data._id)) {
@@ -42,17 +45,20 @@ const ChannelIdPage = () => {
           "for user ",
           currentMember.data?._id
         );
+
         const finalArray = seenMembers.filter(
           (member) => member !== currentUser.data?._id
         );
-        await useMessageSeenUpdate({
+
+        // Sử dụng mutate như một hàm thông thường
+        await messageSeenUpdate({
           id: result._id,
           seenMembers: finalArray,
         });
       }
-    });
+    }
   };
-  
+
   useEffect(() => {
     handleUpdateSeen();
   }, [results]);
