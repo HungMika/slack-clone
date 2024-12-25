@@ -1,3 +1,4 @@
+import { Id } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
@@ -18,7 +19,7 @@ export const current = query({
 export const updateProfile = mutation({
   args: {
     name: v.optional(v.string()),
-    image: v.optional(v.string()), 
+    image: v.optional(v.string()), // Giữ nguyên kiểu string
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -33,29 +34,38 @@ export const updateProfile = mutation({
 
     const updates: { name?: string; image?: string } = {};
 
+    // Cập nhật tên nếu có
     if (args.name !== undefined) {
       updates.name = args.name;
     }
 
-    // Kiểm tra giá trị của image
+    // Xử lý giá trị image
     if (args.image) {
-      // Nếu image không rỗng hoặc undefined
-      const imageUrl = await ctx.storage.getUrl(args.image);
-      if (!imageUrl) {
-        throw new Error("Failed to generate image URL");
+      try {
+        // Lấy URL từ Convex storage
+        const imageUrl = await ctx.storage.getUrl(args.image as Id<"_storage">);
+
+        if (!imageUrl) {
+          throw new Error("Failed to generate image URL");
+        }
+        updates.image = imageUrl;
+      } catch (error) {
+        console.error("Image URL error:", error);
+        updates.image = undefined; // Gán undefined nếu URL không hợp lệ
       }
-      updates.image = imageUrl;
     } else {
-      // Chuyển image thành undefined nếu không có giá trị
-      updates.image = undefined;
-    }
-    
-    if (Object.keys(updates).length === 0) {
-      return userId; 
+      updates.image = undefined; // Nếu image không có, gán undefined
     }
 
+    // Nếu không có dữ liệu mới để cập nhật, trả về userId
+    if (Object.keys(updates).length === 0) {
+      return userId;
+    }
+
+    // Cập nhật dữ liệu
     await ctx.db.patch(userId, updates);
 
     return userId;
   },
 });
+
