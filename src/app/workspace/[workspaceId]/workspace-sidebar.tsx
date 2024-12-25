@@ -23,7 +23,6 @@ import { useCreateChannelModal } from "@/features/channels/store/use-create-chan
 import { useSearchParams } from "next/navigation";
 import { useGetUserHistory } from "@/features/messages/api/use-get-user-history";
 import { useCurrentUser } from "@/features/auth/api/use-current-user";
-import { console } from "inspector";
 
 export const WorkSpaceSideBar = () => {
   const allnotifications = useGetUserHistory();
