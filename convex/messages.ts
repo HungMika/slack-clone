@@ -295,7 +295,9 @@ export const create = mutation({
       .query("members")
       .withIndex("by_workspace_id", (q) =>q.eq("workspaceId", args.workspaceId))
       .collect();
-    const uniqueUserIds = [...new Set(allMembers.map((member) => member.userId))];
+    const uniqueUserIds = [...new Set(allMembers.map((member) => member.userId).filter((_userId) => _userId !== userId))];
+    
+     
     // TODO: handle conversationId
     const messageId = await ctx.db.insert("messages", {
       memberId: member._id,

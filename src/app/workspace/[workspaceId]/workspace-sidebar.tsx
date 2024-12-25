@@ -44,8 +44,8 @@ export const WorkSpaceSideBar = () => {
   const { data: members, isLoading: membersLoading } = useGetMember({
     workspaceId,
   });
-  const currentQuery = useSearchParams()?.toString();
   console.log(allnotifications, "allnotifications");
+
 
   const handleFilterNotifications = ({ ChannelId }: { ChannelId: string }) => {
     // NOTE(Khang): this array have all the info of all message related to the current user
@@ -68,6 +68,19 @@ export const WorkSpaceSideBar = () => {
     console.log("debug thtnththt: ", filteredNotifications);
     return filteredNotifications?.length;
   };
+  const handleFilterConvertations = ({
+    ChannelId,
+  }: {
+    ChannelId: string;
+  }) => {
+  
+    const filteredNotifications = allnotifications?.data?.flatMessages?.filter(
+      (mess) => {
+
+      }
+    );
+  
+  }
   if (memberLoading || workspaceLoading) {
     return (
       <div className="flex flex-col bg-[#5e2c5f] h-full items-center justify-center">
@@ -124,6 +137,7 @@ export const WorkSpaceSideBar = () => {
               image={item.user.image}
               label={item.user.name}
               variant={item._id === memberId ? "active" : "default"}
+              notifiations = {0}
             />
           </div>
         ))}
