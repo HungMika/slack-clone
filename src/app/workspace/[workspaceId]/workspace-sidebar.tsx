@@ -44,9 +44,6 @@ export const WorkSpaceSideBar = () => {
   const { data: members, isLoading: membersLoading } = useGetMember({
     workspaceId,
   });
-  console.log(allnotifications, "allnotifications");
-
-
   const handleFilterNotifications = ({ ChannelId }: { ChannelId: string }) => {
     // NOTE(Khang): this array have all the info of all message related to the current user
     // NOTE(Khang): get the memberID of the user in the channel then from that we can filter out the notifiations
@@ -65,9 +62,7 @@ export const WorkSpaceSideBar = () => {
         return checkIsinChannel && checkIfMemberSeen;
       }
     );
-    console.log("debug thtnththt: ", filteredNotifications);
-    return 0
-    // return filteredNotifications?.length;
+    return filteredNotifications?.length;
   };
   // console.log("debug conser info: ", allnotifications?.data?.arrayWithConversationInfo);
   const handleFilterConvertations = ({
@@ -96,7 +91,6 @@ export const WorkSpaceSideBar = () => {
       }
     );
     
-    console.log("debug thtnththt 15555: ", filteredNotifications);
     
     return filteredNotifications?.length;
   }
