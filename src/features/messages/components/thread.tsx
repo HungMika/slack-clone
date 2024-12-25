@@ -127,7 +127,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
   const handleUpdateSeen = () => {
     console.log("handleUpdateSeen",results);
     results.forEach(async (result) => {
-      let seenMembers = result.seenMembers;
+      const seenMembers = result.seenMembers;
       if (!seenMembers) {
         return;
       }
