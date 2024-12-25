@@ -77,7 +77,7 @@ export const updateMessage = mutation({
     id: v.id("messages"),
     seenMembers: v.array(v.id("users")),
   },
-  handler: async (ctx:MutationCtx, args) => {
+  handler: async (ctx: MutationCtx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
     await ctx.db.patch(args.id, {
@@ -97,7 +97,6 @@ export const get = query({
     if (!userId) {
       throw new Error("Unauthorized");
     }
-  
 
     let _conversationId = args.conversationId;
     if (!args.conversationId && !args.channelId && args.parentMessageId) {
@@ -293,11 +292,18 @@ export const create = mutation({
 
     const allMembers = await ctx.db
       .query("members")
-      .withIndex("by_workspace_id", (q) =>q.eq("workspaceId", args.workspaceId))
+      .withIndex("by_workspace_id", (q) =>
+        q.eq("workspaceId", args.workspaceId)
+      )
       .collect();
-    const uniqueUserIds = [...new Set(allMembers.map((member) => member.userId).filter((_userId) => _userId !== userId))];
-    
-     
+    const uniqueUserIds = [
+      ...new Set(
+        allMembers
+          .map((member) => member.userId)
+          .filter((_userId) => _userId !== userId)
+      ),
+    ];
+
     // TODO: handle conversationId
     const messageId = await ctx.db.insert("messages", {
       memberId: member._id,
@@ -307,7 +313,7 @@ export const create = mutation({
       conversationId: _conversationId,
       workspaceId: args.workspaceId,
       parentMessageId: args.parentMessageId,
-      seenMembers:uniqueUserIds
+      seenMembers: uniqueUserIds,
       //TODO: add conversationId
     });
 
@@ -386,7 +392,41 @@ export const getAllMessagesByUserId = query({
 
     const allmess = await Promise.all(workspaceMessagePromises);
 
-    const flatMessages = allmess.flat();
-    return { members, allmess, flatMessages };
+    let flatMessages = allmess.flat();
+    let arrayWithConversationInfo = flatMessages.map(async (item) => {
+      if (item.conversationId) {
+        const conversationId = item.conversationId as Id<"conversations">;
+        let memberOne =null 
+        let memberTwo=null 
+        const conversations = await ctx.db
+          .query("conversations")
+          .withIndex("by_id", (q) => q.eq("_id", conversationId))
+          .collect();
+        if (conversations.length > 0) {
+          let [memberIdOne, memberIdTwo] = [
+            conversations[0].memberOneId,
+            conversations[0].memberTwoId,
+          ];
+          memberIdOne = memberIdOne as Id<"members">;
+          memberIdTwo = memberIdTwo as Id<"members">;
+          memberOne = await ctx.db
+            .query("members")
+            .withIndex("by_id", (q) => q.eq("_id", memberIdOne))
+            .collect();
+          memberTwo = await ctx.db
+            .query("members")
+            .withIndex("by_id", (q) => q.eq("_id", memberIdTwo))
+            .collect();
+        }
+        return {
+          ...item,
+          conversationInfo: {memberOne: memberOne, memberTwo},
+        };
+      }
+      return {...item,conversationInfo:null}
+    });
+
+    const allConversationInfo = await Promise.all(arrayWithConversationInfo);
+    return { members, allmess, flatMessages,allConversationInfo };
   },
 });

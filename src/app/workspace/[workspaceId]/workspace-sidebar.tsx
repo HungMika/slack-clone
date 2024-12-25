@@ -54,7 +54,7 @@ export const WorkSpaceSideBar = () => {
       (member) => member.userId === currentUser.data?._id
     );
 
-    const filteredNotifications = allnotifications?.data?.flatMessages?.filter(
+    const filteredNotifications = allnotifications?.data?.allConversationInfo?.filter(
       (mess) => {
         const checkIsinChannel = mess.channelId === ChannelId;
         let checkIfMemberSeen = false;
@@ -68,18 +68,36 @@ export const WorkSpaceSideBar = () => {
     console.log("debug thtnththt: ", filteredNotifications);
     return filteredNotifications?.length;
   };
+  // console.log("debug conser info: ", allnotifications?.data?.arrayWithConversationInfo);
   const handleFilterConvertations = ({
-    ChannelId,
+    UserId,
   }: {
-    ChannelId: string;
+    UserId: string;
   }) => {
-  
-    const filteredNotifications = allnotifications?.data?.flatMessages?.filter(
-      (mess) => {
+    const converationInfo = allnotifications?.data?.allConversationInfo?.find(item=>{
+      if(!item.conversationInfo) return false
+      if(!item.conversationInfo.memberOne?.length) return false
+      if(!item.conversationInfo.memberTwo?.length) return false
+      return item.conversationInfo?.memberOne[0]?.userId === UserId || item.conversationInfo?.memberTwo[0].userId===UserId
+    })
 
+    if(!converationInfo) return 0
+
+    const filteredNotifications = allnotifications?.data?.allConversationInfo?.filter(
+      (mess) => {
+        const checkIsCon= mess.conversationId === converationInfo.conversationId;
+        let checkIfMemberSeen = false;
+        if (currentUser.data) {
+          checkIfMemberSeen =
+            mess?.seenMembers?.includes(currentUser?.data?._id) ?? false;
+        }
+        return checkIsCon && checkIfMemberSeen
       }
     );
-  
+    
+    console.log("debug thtnththt 15555: ", filteredNotifications);
+    
+    return filteredNotifications?.length;
   }
   if (memberLoading || workspaceLoading) {
     return (
@@ -137,7 +155,7 @@ export const WorkSpaceSideBar = () => {
               image={item.user.image}
               label={item.user.name}
               variant={item._id === memberId ? "active" : "default"}
-              notifiations = {0}
+              notifications = {item.userId === currentUser.data?._id? 0 : handleFilterConvertations({ UserId: item.user._id })}
             />
           </div>
         ))}
