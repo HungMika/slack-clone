@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, QueryCtx } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
@@ -8,7 +8,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
   const messages = await ctx.db
     .query("messages")
     .withIndex("by_parent_message_id", (q) =>
-      q.eq("parentMessageId", messageId),
+      q.eq("parentMessageId", messageId)
     )
     .collect();
   // check if this message is a thread
@@ -62,16 +62,29 @@ const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
 const getMember = async (
   ctx: QueryCtx,
   workspaceId: Id<"workspaces">,
-  userId: Id<"users">,
+  userId: Id<"users">
 ) => {
   return ctx.db
     .query("members")
     .withIndex("by_workspace_id_user_id", (q) =>
-      q.eq("workspaceId", workspaceId).eq("userId", userId),
+      q.eq("workspaceId", workspaceId).eq("userId", userId)
     )
     .unique();
 };
 
+export const updateMessage = mutation({
+  args: {
+    id: v.id("messages"),
+    seenMembers: v.array(v.id("users")),
+  },
+  handler: async (ctx:MutationCtx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    await ctx.db.patch(args.id, {
+      seenMembers: args.seenMembers,
+    });
+  },
+});
 export const get = query({
   args: {
     channelId: v.optional(v.id("channels")),
@@ -84,6 +97,7 @@ export const get = query({
     if (!userId) {
       throw new Error("Unauthorized");
     }
+  
 
     let _conversationId = args.conversationId;
     if (!args.conversationId && !args.channelId && args.parentMessageId) {
@@ -102,7 +116,7 @@ export const get = query({
         q
           .eq("channelId", args.channelId)
           .eq("parentMessageId", args.parentMessageId)
-          .eq("conversationId", _conversationId),
+          .eq("conversationId", _conversationId)
       )
       .order("desc")
       .paginate(args.paginationOpts);
@@ -134,11 +148,11 @@ export const get = query({
             const dedupedReactions = reactionsWithCounts.reduce(
               (acc, reaction) => {
                 const existingReaction = acc.find(
-                  (r) => r.value === reaction.value,
+                  (r) => r.value === reaction.value
                 );
                 if (existingReaction) {
                   existingReaction.memberIds = Array.from(
-                    new Set([...existingReaction.memberIds, reaction.memberId]),
+                    new Set([...existingReaction.memberIds, reaction.memberId])
                   );
                 } else {
                   acc.push({
@@ -151,11 +165,11 @@ export const get = query({
               [] as (Doc<"reactions"> & {
                 count: number;
                 memberIds: Id<"members">[];
-              })[],
+              })[]
             );
 
             const reactionWithoutMemberIdProperty = dedupedReactions.map(
-              ({ memberId, ...rest }) => rest,
+              ({ memberId, ...rest }) => rest
             );
 
             return {
@@ -168,11 +182,12 @@ export const get = query({
               threadImage: thread.image,
               threadName: thread.name,
               threadTimestamp: thread.timestamp,
+              seenMembers: message.seenMembers,
             };
-          }),
+          })
         )
       ).filter(
-        (message): message is NonNullable<typeof message> => message != null,
+        (message): message is NonNullable<typeof message> => message != null
       ),
     };
   },
@@ -211,7 +226,7 @@ export const getById = query({
         const existingReaction = acc.find((r) => r.value === reaction.value);
         if (existingReaction) {
           existingReaction.memberIds = Array.from(
-            new Set([...existingReaction.memberIds, reaction.memberId]),
+            new Set([...existingReaction.memberIds, reaction.memberId])
           );
         } else {
           acc.push({
@@ -224,11 +239,11 @@ export const getById = query({
       [] as (Doc<"reactions"> & {
         count: number;
         memberIds: Id<"members">[];
-      })[],
+      })[]
     );
 
     const reactionWithoutMemberIdProperty = dedupedReactions.map(
-      ({ memberId, ...rest }) => rest,
+      ({ memberId, ...rest }) => rest
     );
 
     return {
@@ -272,8 +287,17 @@ export const create = mutation({
 
     const member = await getMember(ctx, args.workspaceId, userId);
     if (!member) {
+      console.log("Member not found");
       throw new Error("Unauthorized");
     }
+
+    const allMembers = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) =>q.eq("workspaceId", args.workspaceId))
+      .collect();
+    const uniqueUserIds = [...new Set(allMembers.map((member) => member.userId).filter((_userId) => _userId !== userId))];
+    
+     
     // TODO: handle conversationId
     const messageId = await ctx.db.insert("messages", {
       memberId: member._id,
@@ -283,6 +307,7 @@ export const create = mutation({
       conversationId: _conversationId,
       workspaceId: args.workspaceId,
       parentMessageId: args.parentMessageId,
+      seenMembers:uniqueUserIds
       //TODO: add conversationId
     });
 
@@ -333,5 +358,35 @@ export const remove = mutation({
     await ctx.db.delete(args.id);
 
     return args.id;
+  },
+});
+export const getAllMessagesByUserId = query({
+  args: {
+    // userId: v.id("users"),
+    // paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .collect();
+
+    const workspaceIds = members.map((item) => item.workspaceId);
+    const workspaceMessagePromises = workspaceIds.map(async (workspaceId) => {
+      return await ctx.db
+        .query("messages")
+        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", workspaceId))
+        .collect();
+    });
+
+    const allmess = await Promise.all(workspaceMessagePromises);
+
+    const flatMessages = allmess.flat();
+    return { members, allmess, flatMessages };
   },
 });

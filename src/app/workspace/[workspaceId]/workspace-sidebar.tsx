@@ -20,12 +20,16 @@ import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
+import { useSearchParams } from "next/navigation";
+import { useGetUserHistory } from "@/features/messages/api/use-get-user-history";
+import { useCurrentUser } from "@/features/auth/api/use-current-user";
 
 export const WorkSpaceSideBar = () => {
+  const allnotifications = useGetUserHistory();
   const memberId = useMemberId();
   const channelId = useChannelId();
   const workspaceId = useWorkspaceId();
-
+  const currentUser = useCurrentUser();
   const [_isOpen, setIsOpen] = useCreateChannelModal();
 
   const { data: channels, isLoading: channelsLoading } = useGetChannels({
@@ -40,7 +44,43 @@ export const WorkSpaceSideBar = () => {
   const { data: members, isLoading: membersLoading } = useGetMember({
     workspaceId,
   });
+  console.log(allnotifications, "allnotifications");
 
+
+  const handleFilterNotifications = ({ ChannelId }: { ChannelId: string }) => {
+    // NOTE(Khang): this array have all the info of all message related to the current user
+    // NOTE(Khang): get the memberID of the user in the channel then from that we can filter out the notifiations
+    const memberInChannel = allnotifications?.data?.members.find(
+      (member) => member.userId === currentUser.data?._id
+    );
+
+    const filteredNotifications = allnotifications?.data?.flatMessages?.filter(
+      (mess) => {
+        const checkIsinChannel = mess.channelId === ChannelId;
+        let checkIfMemberSeen = false;
+        if (memberInChannel && currentUser.data) {
+          checkIfMemberSeen =
+            mess?.seenMembers?.includes(currentUser?.data?._id) ?? false;
+        }
+        return checkIsinChannel && checkIfMemberSeen;
+      }
+    );
+    console.log("debug thtnththt: ", filteredNotifications);
+    return filteredNotifications?.length;
+  };
+  const handleFilterConvertations = ({
+    ChannelId,
+  }: {
+    ChannelId: string;
+  }) => {
+  
+    // const filteredNotifications = allnotifications?.data?.flatMessages?.filter(
+    //   (mess) => {
+
+    //   }
+    // );
+  
+  }
   if (memberLoading || workspaceLoading) {
     return (
       <div className="flex flex-col bg-[#5e2c5f] h-full items-center justify-center">
@@ -80,6 +120,7 @@ export const WorkSpaceSideBar = () => {
             icon={HashIcon}
             label={item.name}
             variant={channelId === item._id ? "active" : "default"}
+            notifications={handleFilterNotifications({ ChannelId: item._id })}
           />
         ))}
       </WorkspaceSection>
@@ -96,10 +137,11 @@ export const WorkSpaceSideBar = () => {
               image={item.user.image}
               label={item.user.name}
               variant={item._id === memberId ? "active" : "default"}
+              notifiations = {0}
             />
           </div>
         ))}
       </WorkspaceSection>
     </div>
-  );
+  )
 };

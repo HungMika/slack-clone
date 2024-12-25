@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Quill from "quill";
 import { toast } from "sonner";
@@ -16,6 +16,8 @@ import { useCreateMessage } from "../api/use-create-message";
 import { useGetSingleMessage } from "../api/use-get-single-message";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
+import { useMessageSeen } from "../api/use-message-seen";
+import { useCurrentUser } from "@/features/auth/api/use-current-user";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -63,7 +65,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
 
   const canLoadMore = status === "CanLoadMore";
   const isLoadingMore = status === "LoadingMore";
-
+  const currentUser = useCurrentUser()
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<Quill | null>(null);
@@ -102,6 +104,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
           body: image,
         });
         console.log({ result });
+
         if (!result.ok) {
           throw new Error("Failed to upload image");
         }
@@ -119,7 +122,30 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
       editorRef.current?.enable(true);
     }
   };
+  const { mutate: useMessageSeenUpdate } = useMessageSeen();
+  console.log("debug 222", results)
+  const handleUpdateSeen = () => {
+    console.log("handleUpdateSeen",results);
+    results.forEach(async (result) => {
+      let seenMembers = result.seenMembers;
+      if (!seenMembers) {
+        return;
+      }
 
+      if (currentUser.data && seenMembers.includes(currentUser.data._id)) {
+        const finalArray = seenMembers.filter(
+          (member) => member !== currentUser.data?._id
+        );
+        await useMessageSeenUpdate({
+          id: result._id,
+          seenMembers: finalArray,
+        });
+      }
+    });
+  };
+  useEffect(() => {
+    handleUpdateSeen();
+  }, [results]);
   const groupedMessages = results?.reduce(
     (groups, message) => {
       const date = new Date(message._creationTime);

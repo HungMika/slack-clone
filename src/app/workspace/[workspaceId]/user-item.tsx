@@ -27,10 +27,12 @@ interface UserItemProps {
   id: Id<"members">;
   variant?: VariantProps<typeof userItemVariant>["variants"];
   label?: string;
+  notifiations?: number;
   image?: string;
 }
 
 export const UserItem = ({
+  notifiations,
   id,
   variant,
   label = "Member",
