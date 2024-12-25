@@ -37,15 +37,19 @@ export const updateProfile = mutation({
       updates.name = args.name;
     }
 
-    if (args.image !== undefined) {
+    // Kiểm tra giá trị của image
+    if (args.image) {
+      // Nếu image không rỗng hoặc undefined
       const imageUrl = await ctx.storage.getUrl(args.image);
       if (!imageUrl) {
-        updates.image = undefined;
         throw new Error("Failed to generate image URL");
       }
       updates.image = imageUrl;
+    } else {
+      // Chuyển image thành undefined nếu không có giá trị
+      updates.image = undefined;
     }
-
+    
     if (Object.keys(updates).length === 0) {
       return userId; 
     }
