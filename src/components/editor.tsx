@@ -142,7 +142,7 @@ const Editor = ({
   //   quill?.insertText(quill?.getSelection()?.index || 0, emojivalue);
   // };
 
-  const onEmojiSelect = (emojivalue: string) => {
+  const onEmojiSelect = (emoji: any) => {
     const quill = quillRef.current;
     if (!quill) return;
   
@@ -150,9 +150,9 @@ const Editor = ({
     
     const index = selection?.index ?? quill.getLength(); 
   
-    quill.insertText(index, emojivalue);
+    quill.insertText(index, emoji.native);
   
-    quill.setSelection(index + emojivalue.length);
+    quill.setSelection(index + (emoji.native).length);
   };
   
 
