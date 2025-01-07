@@ -67,7 +67,7 @@ export const UserButton = () => {
     try {
       setIsUpdating(true);
   
-      let imageStorageId = null;
+      let imageStorageId = undefined; // Sử dụng undefined thay vì null
       if (image) {
         const uploadUrl = await generateUploadUrl({}, { throwError: true });
         if (!uploadUrl) throw new Error("Failed to generate upload URL");
@@ -81,11 +81,11 @@ export const UserButton = () => {
         if (!response.ok) throw new Error("Failed to upload image");
   
         const { storageId } = await response.json();
-        imageStorageId = storageId;
+        imageStorageId = storageId; // Gán giá trị nếu có ảnh mới
       }
   
       await updateUser(
-        { name, image: imageStorageId },
+        { name, image: imageStorageId || undefined }, // Chuyển về undefined nếu không có ảnh mới
         {
           onSuccess: () => {
             toast.success("Profile updated successfully!");
@@ -102,6 +102,7 @@ export const UserButton = () => {
       setIsUpdating(false);
     }
   };
+  
   
 
   return (
