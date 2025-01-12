@@ -28,9 +28,11 @@ interface SidebarItemProps {
   id: string;
   icon: LucideIcon | IconType;
   variant?: VariantProps<typeof sidebarItemVariant>["variant"];
+  notifications?: number;
 }
 
 export const SidebarItem = ({
+  notifications,
   label,
   icon: Icon,
   id,
@@ -54,6 +56,11 @@ export const SidebarItem = ({
       <Link href={`/workspace/${workspaceId}/channel/${id}`}>
         <Icon className="size-3.5 mr-1 shrink-0" />
         <span className="text-sm truncate">{label}</span>
+        {notifications&&notifications>0 ? (
+          <span className="ml-auto text-xs bg-[#481349] rounded w-4 h-4 flex items-center justify-center">
+            {notifications}
+          </span>
+        ) : null}
       </Link>
     </Button>
   ) : (
@@ -65,6 +72,7 @@ export const SidebarItem = ({
     >
       <Icon className="size-3.5 mr-1 shrink-0" />
       <span className="text-sm truncate">{label}</span>
+ 
     </Button>
   );
 };

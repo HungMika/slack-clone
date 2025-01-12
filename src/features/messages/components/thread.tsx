@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Quill from "quill";
 import { toast } from "sonner";
@@ -16,6 +16,8 @@ import { useCreateMessage } from "../api/use-create-message";
 import { useGetSingleMessage } from "../api/use-get-single-message";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
+import { useMessageSeen } from "../api/use-message-seen";
+import { useCurrentUser } from "@/features/auth/api/use-current-user";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -63,7 +65,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
 
   const canLoadMore = status === "CanLoadMore";
   const isLoadingMore = status === "LoadingMore";
-
+  const currentUser = useCurrentUser();
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<Quill | null>(null);
@@ -102,6 +104,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
           body: image,
         });
         console.log({ result });
+
         if (!result.ok) {
           throw new Error("Failed to upload image");
         }
@@ -119,7 +122,34 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
       editorRef.current?.enable(true);
     }
   };
+  const { mutate: messageSeenUpdate } = useMessageSeen(); // Gọi hook để lấy hàm mutate trước
 
+  const handleUpdateSeen = async () => {
+    console.log("handleUpdateSeen", results);
+
+    for (const result of results) {
+      // Sử dụng for...of để tuần tự xử lý
+      const seenMembers = result.seenMembers;
+      if (!seenMembers) {
+        continue;
+      }
+
+      if (currentUser.data && seenMembers.includes(currentUser.data._id)) {
+        const finalArray = seenMembers.filter(
+          (member) => member !== currentUser.data?._id
+        );
+
+        // Sử dụng mutate như một hàm thông thường
+        await messageSeenUpdate({
+          id: result._id,
+          seenMembers: finalArray,
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    handleUpdateSeen();
+  }, [results]);
   const groupedMessages = results?.reduce(
     (groups, message) => {
       const date = new Date(message._creationTime);
@@ -130,7 +160,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
       groups[dateKey].unshift(message);
       return groups;
     },
-    {} as Record<string, typeof results>,
+    {} as Record<string, typeof results>
   );
 
   if (loadingMessage || status === "LoadingFirstPage") {
@@ -190,7 +220,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
                 prevMessage.user?._id === message.user?._id &&
                 differenceInMinutes(
                   new Date(message._creationTime),
-                  new Date(prevMessage._creationTime),
+                  new Date(prevMessage._creationTime)
                 ) < TIME_THREDHOLD;
 
               return (
@@ -231,7 +261,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
                 },
                 {
                   threshold: 1,
-                },
+                }
               );
               observer.observe(el);
               return () => {

@@ -7,6 +7,9 @@ import { Loader } from "lucide-react";
 import { ChatInput } from "./chat-input";
 import { MessageList } from "@/components/message-list";
 import { usePanel } from "@/hooks/use-panel";
+import { useCurrentUser } from "@/features/auth/api/use-current-user";
+import { useEffect } from "react";
+import { useMessageSeen } from "@/features/messages/api/use-message-seen";
 
 interface ConversationProps {
   id: Id<"conversations">;
@@ -14,6 +17,7 @@ interface ConversationProps {
 
 export const Conversation = ({ id }: ConversationProps) => {
   const memberId = useMemberId();
+  const currentUser = useCurrentUser();
 
   const { onOpenProfile } = usePanel();
 
@@ -21,7 +25,34 @@ export const Conversation = ({ id }: ConversationProps) => {
     id: memberId,
   });
   const { results, status, loadMore } = UseGetMessages({ conversationId: id });
+  const { mutate: messageSeenUpdate } = useMessageSeen(); // Gọi hook để lấy hàm mutate trước
 
+  const handleUpdateSeen = async () => {
+    console.log("handleUpdateSeen", results);
+
+    for (const result of results) {
+      // Sử dụng for...of để tuần tự xử lý
+      const seenMembers = result.seenMembers;
+      if (!seenMembers) {
+        continue;
+      }
+
+      if (currentUser.data && seenMembers.includes(currentUser.data._id)) {
+        const finalArray = seenMembers.filter(
+          (member) => member !== currentUser.data?._id
+        );
+
+        // Sử dụng mutate như một hàm thông thường
+        await messageSeenUpdate({
+          id: result._id,
+          seenMembers: finalArray,
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    handleUpdateSeen();
+  }, [results]);
   if (memberLoading || status === "LoadingFirstPage")
     return (
       <div className="h-full flex items-center jusitfy-center">
