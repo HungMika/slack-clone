@@ -57,7 +57,7 @@ export const UserItem = ({
         </Avatar>
         <span className="text-sm truncate">{label}</span>
         {notifications&&notifications>0 ? (
-          <span className="ml-auto text-xs bg-[#481349] rounded w-4 h-4 flex items-center justify-center">
+          <span className="ml-auto text-xs bg-red-500 rounded w-4 h-4 flex items-center justify-center">
             {notifications}
           </span>
         ) : null}
