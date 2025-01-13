@@ -65,7 +65,7 @@ export const WorkSpaceSideBar = () => {
     return filteredNotifications?.length;
   };
   // console.log("debug conser info: ", allnotifications?.data?.arrayWithConversationInfo);
-  const handleFilterConvertations = ({
+  const handleFilterConversations = ({
     UserId,
   }: {
     UserId: string;
@@ -126,6 +126,7 @@ export const WorkSpaceSideBar = () => {
         hint="New channel"
         onNew={member.role === "admin" ? () => setIsOpen(true) : undefined}
       >
+        <div className="sidebar-scrollbar max-h-60">
         {channels?.map((item) => (
           <SidebarItem
             id={item._id}
@@ -136,12 +137,13 @@ export const WorkSpaceSideBar = () => {
             notifications={handleFilterNotifications({ ChannelId: item._id })}
           />
         ))}
+        </div>
       </WorkspaceSection>
       <WorkspaceSection
         label="Direct Messages"
         hint="New direct message"
-        //onNew={() => {}}
       >
+        <div className="sidebar-scrollbar max-h-60">
         {members?.map((item) => (
           <div key={item._id}>
             <UserItem
@@ -150,10 +152,11 @@ export const WorkSpaceSideBar = () => {
               image={item.user.image}
               label={item.user.name}
               variant={item._id === memberId ? "active" : "default"}
-              notifications = {item.userId === currentUser.data?._id? 0 : handleFilterConvertations({ UserId: item.user._id })}
+              notifications = {item.userId === currentUser.data?._id? 0 : handleFilterConversations({ UserId: item.user._id })}
             />
           </div>
         ))}
+        </div>
       </WorkspaceSection>
     </div>
   )
